@@ -1,0 +1,144 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Portal - Dashboard Home</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/admin-dashboard.css">
+</head>
+<body>
+    <div class="sidebar">
+        <div class="brand">
+            <h1>GetYourRide</h1>
+            <span>University Admin Portal</span>
+        </div>
+        <ul class="menu-list">
+            <li><a href="dashboard.html" class="menu-item active"><i class="fa-solid fa-gauge-high"></i> Dashboard</a></li>
+            <li><a href="verify-drivers.html" class="menu-item"><i class="fa-solid fa-shield-halved"></i> Driver Verification</a></li>
+            <li><a href="driver-ratings.html" class="menu-item"><i class="fa-solid fa-star"></i> Driver Ratings</a></li>
+        </ul>
+
+        <div class="sidebar-spacer"></div>
+
+        <ul class="menu-list bottom-menu">
+            <li><a href="#" class="menu-item" onclick="openSettingsModal()"><i class="fa-solid fa-gear"></i> Settings</a></li>
+            <li><a href="#" class="menu-item" onclick="openSupportModal()"><i class="fa-solid fa-circle-question"></i> Support Help</a></li>
+        </ul>
+
+        <div class="sidebar-profile-footer">
+            <div class="profile-trigger-area" onclick="toggleProfileMenu()">
+                <div class="avatar-placeholder"><i class="fa-solid fa-user"></i></div>
+                <div class="profile-info-text">
+                    <span class="user-display-name" id="adminNameLabel">Loading profile...</span>
+                    <span class="user-display-email" id="adminEmailLabel">connecting to database...</span>
+                </div>
+            </div>
+
+            <div class="profile-dropdown-menu" id="profileDropdown">
+                <a href="#" class="dropdown-link" onclick="openProfileModal()"><i class="fa-solid fa-user"></i> View Profile Info</a>
+                <hr class="dropdown-divider">
+                <a href="#" class="dropdown-link logout-action" onclick="handleLogout()"><i class="fa-solid fa-right-from-bracket"></i> Log Out</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="top-navbar">
+            <div class="search-box-wrapper"></div>
+
+            <div class="top-navbar-right">
+                <div class="portal-badge">
+                    <span id="liveClock" style="font-family: monospace; font-weight: 700; color: #ff7a00; margin-right: 15px;">00:00:00</span>
+                    Admin Portal
+                </div>
+                <button class="top-logout-btn" onclick="handleLogout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+            </div>
+        </div>
+
+        <div class="content-body">
+            <div class="view-header">
+                <div>
+                    <h2>Welcome to the Admin Center</h2>
+                    <p class="subtitle">Select an operational dashboard control panel to view system tracking matrix loops.</p>
+                </div>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-top: 20px;">
+                <div class="metric-card" style="cursor: pointer;" onclick="window.location.href='verify-drivers.html'">
+                    <h3><i class="fa-solid fa-shield-halved"></i> Driver Verification Queue</h3>
+                    <p style="color: var(--text-muted); font-size: 13px; line-height: 1.5;">Review incoming driver applications, verify student documentation, and approve system activation requests.</p>
+                </div>
+                <div class="metric-card" style="cursor: pointer;" onclick="window.location.href='driver-ratings.html'">
+                    <h3><i class="fa-solid fa-star"></i> Driver Performance & Ratings</h3>
+                    <p style="color: var(--text-muted); font-size: 13px; line-height: 1.5;">Track overall score stats, monitor completed transit counts, and evaluate driver feedback rules directly.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="profile-modal-overlay" id="settingsModal">
+        <div class="profile-modal-card">
+            <h3><i class="fa-solid fa-gear"></i> Portal Settings</h3>
+            <div class="modal-body-content">
+                <label style="display:block; margin: 10px 0 5px; font-weight:600; font-size:13px;">Dashboard Theme</label>
+                <select id="themeSelect" style="width:100%; padding:8px; border-radius:6px; border:1px solid #cbd5e1; outline:none;">
+                    <option value="light">Default Light Mode</option>
+                    <option value="dark">High Contrast Dark Mode</option>
+                </select>
+                <label style="display:block; margin: 15px 0 5px; font-weight:600; font-size:13px;">Refresh Frequency</label>
+                <select id="refreshSelect" style="width:100%; padding:8px; border-radius:6px; border:1px solid #cbd5e1; outline:none;">
+                    <option value="30000">Every 30 Seconds</option>
+                    <option value="60000">Every Minute</option>
+                    <option value="manual">Manual Refresh</option>
+                </select>
+            </div>
+            <button class="close-modal-btn" onclick="closeSettingsModal()">Save & Close</button>
+        </div>
+    </div>
+
+    <div class="profile-modal-overlay" id="supportModal">
+        <div class="profile-modal-card">
+            <h3><i class="fa-solid fa-circle-question"></i> Dispatch Support Help</h3>
+            <div class="modal-body-content">
+                <p style="font-size:13px; color:#64748b;">Need immediate assistance with a transit route layout or emergency check-in failure?</p>
+                <div style="background:#f8fafc; padding:12px; border-radius:6px; border-left:4px solid #ff7a00; margin:10px 0;">
+                    <strong><i class="fa-solid fa-phone"></i> Transit Control Line:</strong><br>+27 (0) 41 504 1111
+                </div>
+                <div style="background:#f8fafc; padding:12px; border-radius:6px; border-left:4px solid #10b981; margin:10px 0;">
+                    <strong><i class="fa-solid fa-envelope"></i> Emergency Support:</strong><br>support@getyourride.com
+                </div>
+            </div>
+            <button class="close-modal-btn" onclick="closeSupportModal()">Close Help Desk</button>
+        </div>
+    </div>
+
+    <div class="profile-modal-overlay" id="profileModal">
+        <div class="profile-modal-card">
+            <h3 style="margin-bottom: 20px; font-size: 18px; color: #1e293b;">Admin Profile Card</h3>
+            <div class="modal-body-content" style="line-height: 2; font-size: 14px; color: #334155; margin-bottom: 25px;">
+                <p><strong>Full Name:</strong> <span id="modalFullName" style="color: #64748b; margin-left: 5px;">Loading...</span></p>
+                <p><strong>Staff/ID Number:</strong> <span id="modalIdNumber" style="color: #64748b; margin-left: 5px;">Loading...</span></p>
+                <p><strong>System Email:</strong> <span id="modalEmail" style="color: #64748b; margin-left: 5px;">Loading...</span></p>
+                <p><strong>Assigned Role:</strong> <span id="modalAssignedRole" style="color: #64748b; margin-left: 5px;">Loading...</span></p>
+            </div>
+            <button class="close-modal-btn" onclick="closeProfileModal()" style="width: 100%; background: #0f172a; color: white; border: none; padding: 12px; border-radius: 6px; font-weight: 600; cursor: pointer;">Close Reference</button>
+        </div>
+    </div>
+
+    <!-- Custom Logout Confirmation Modal -->
+    <div id="logoutModal" class="modal-backdrop" style="display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(4px); z-index: 1000; align-items: center; justify-content: center;">
+        <div class="modal-card cute-logout-card" style="background: #ffffff; padding: 32px; border-radius: 20px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);">
+            <div style="width: 64px; height: 64px; border-radius: 50%; background: #fee2e2; color: #ef4444; display: flex; align-items: center; justify-content: center; font-size: 26px; margin: 0 auto 16px auto;"><i class="fa-solid fa-right-from-bracket"></i></div>
+            <h3 style="margin: 0 0 8px 0; color: #1e293b; font-size: 20px; font-weight: 700;">Leaving so soon?</h3>
+            <p style="color: #64748b; font-size: 14px; margin: 0 0 24px 0;">Are you sure you want to sign out of the Admin Portal?</p>
+
+            <div style="display: flex; gap: 12px; justify-content: center;">
+                <button onclick="closeLogoutModal()" style="flex: 1; padding: 12px 16px; border-radius: 10px; border: 1px solid #cbd5e1; background: #f8fafc; color: #334155; font-weight: 600; cursor: pointer;">Stay</button>
+                <button onclick="confirmLogout()" style="flex: 1; padding: 12px 16px; border-radius: 10px; border: none; background: #ef4444; color: #ffffff; font-weight: 600; cursor: pointer;">Yes, Sign Out</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../assets/js/admin-dropdown.js"></script>
+</body>
+</html>
