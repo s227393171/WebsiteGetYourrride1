@@ -1,0 +1,15 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Refuse To Style Over Conflict Markers",
+      "trigger": "PreToolUse",
+      "description": "Hard stop (exit 2) if the target file still contains unresolved merge conflict markers.",
+      "matcher": "fs_write|str_replace",
+      "action": {
+        "type": "command",
+        "command": "powershell -NoProfile -Command \"if (Test-Path -LiteralPath '${file}') { if (Select-String -LiteralPath '${file}' -Pattern '^<<<<<<< ' -Quiet -ErrorAction SilentlyContinue) { [Console]::Error.WriteLine('BLOCKED: resolve merge conflict markers in this file first'); exit 2 } }; exit 0\""
+      }
+    }
+  ]
+}

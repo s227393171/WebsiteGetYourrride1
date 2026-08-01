@@ -1,0 +1,15 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Lint JS/CSS on Save",
+      "trigger": "PostFileSave",
+      "description": "Runs eslint --fix on saved JS/CSS files.",
+      "matcher": "\\.(js|css)$",
+      "action": {
+        "type": "command",
+        "command": "npx eslint --fix \"${file}\""
+      }
+    }
+  ]
+}
