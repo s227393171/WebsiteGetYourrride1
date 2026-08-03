@@ -1,0 +1,627 @@
+/* ==========================================================================
+   ACADEMIC TRANSIT — SHARED PORTAL LAYOUT
+   Phase 1 deliverable: the sidebar, top app bar, card and status badge that
+   admin/, coordinator/ and driver/ all reuse. Only the nav links differ per
+   role (injected by assets/js/shared-layout.js).
+
+   Requires assets/css/design-tokens.css to be loaded first.
+   ========================================================================== */
+
+/* ==========================================================================
+   1. PAGE SHELL
+   ========================================================================== */
+.at-shell {
+    min-height: 100vh;
+    background: var(--color-surface-grey);
+    font-family: var(--font-family-base);
+    font-size: var(--font-size-body-lg);
+    line-height: var(--line-height-body);
+    color: var(--color-on-surface);
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Fixed-fluid hybrid: main content sits beside the fixed 280px sidebar. */
+.at-main {
+    margin-left: var(--sidebar-width);
+    padding-top: var(--topbar-height);
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+
+.at-content {
+    padding: var(--space-lg) var(--space-margin-desktop);
+    max-width: 1440px;
+}
+
+/* 24px rhythm between distinct sections */
+.at-section + .at-section {
+    margin-top: var(--space-lg);
+}
+
+/* ==========================================================================
+   2. TOP APP BAR — solid Navy, logo left, notification bell right
+   ========================================================================== */
+.at-topbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--topbar-height);
+    z-index: 1100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-md);
+    padding: 0 var(--space-lg);
+    box-sizing: border-box;
+    background: var(--color-primary-container);
+    color: var(--color-on-primary);
+}
+
+.at-topbar__brand {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    /* Sits above the sidebar rail so the lockup lines up with the nav */
+    min-width: calc(var(--sidebar-width) - var(--space-lg));
+    text-decoration: none;
+    color: inherit;
+}
+
+.at-topbar__logo {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-default);
+    object-fit: contain;
+    background: var(--color-on-primary);
+    flex-shrink: 0;
+}
+
+.at-topbar__title {
+    font-size: var(--font-size-body-lg);
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: var(--letter-spacing-label);
+    white-space: nowrap;
+}
+
+.at-topbar__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-base);
+}
+
+/* Icon button: 44px min touch target, no layout shift on press */
+.at-icon-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: none;
+    border-radius: var(--radius-full);
+    background: transparent;
+    color: var(--color-on-primary);
+    cursor: pointer;
+    transition: background-color var(--duration-fast) var(--easing-standard);
+}
+
+.at-icon-btn:hover {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.at-icon-btn:focus-visible {
+    outline: var(--focus-ring-width) solid var(--color-on-primary);
+    outline-offset: 2px;
+}
+
+.at-icon-btn svg {
+    width: 22px;
+    height: 22px;
+    stroke-width: 2;
+}
+
+/* Unread indicator uses Accent Orange — notifications are an accent use case */
+.at-icon-btn__dot {
+    position: absolute;
+    top: 9px;
+    right: 10px;
+    width: 8px;
+    height: 8px;
+    border-radius: var(--radius-full);
+    background: var(--color-secondary-container);
+    border: 2px solid var(--color-primary-container);
+    box-sizing: content-box;
+}
+
+/* ==========================================================================
+   3. SIDEBAR — fixed 280px, Navy, Accent Orange active state
+   ========================================================================== */
+.at-sidebar {
+    position: fixed;
+    top: var(--topbar-height);
+    left: 0;
+    bottom: 0;
+    width: var(--sidebar-width);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    background: var(--color-primary);
+    color: var(--color-on-primary);
+    overflow-y: auto;
+    box-sizing: border-box;
+}
+
+.at-sidebar__role {
+    padding: var(--space-lg) var(--space-md) var(--space-sm);
+    font-size: var(--font-size-label-sm);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-label);
+    letter-spacing: var(--letter-spacing-label);
+    text-transform: uppercase;
+    color: var(--color-on-primary-container);
+}
+
+.at-sidebar__nav {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    padding: 0 var(--space-sm);
+    list-style: none;
+    margin: 0;
+}
+
+.at-sidebar__link {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    /* 44px min height keeps the target accessible */
+    min-height: 44px;
+    padding: var(--space-sm) var(--space-md);
+    border-radius: var(--radius-md);
+    /* 3px inset marks the active item without shifting layout on hover */
+    border-left: 3px solid transparent;
+    color: rgba(255, 255, 255, 0.82);
+    font-size: var(--font-size-body-md);
+    font-weight: var(--font-weight-medium);
+    text-decoration: none;
+    transition: background-color var(--duration-fast) var(--easing-standard),
+                color var(--duration-fast) var(--easing-standard);
+}
+
+.at-sidebar__link svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    stroke-width: 2;
+}
+
+.at-sidebar__link:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--color-on-primary);
+}
+
+.at-sidebar__link:focus-visible {
+    outline: var(--focus-ring-width) solid var(--color-secondary-container);
+    outline-offset: -2px;
+}
+
+.at-sidebar__link.is-active {
+    background: var(--color-primary-container);
+    border-left-color: var(--color-secondary-container);
+    color: var(--color-on-primary);
+    font-weight: var(--font-weight-semibold);
+}
+
+.at-sidebar__footer {
+    margin-top: auto;
+    padding: var(--space-md) var(--space-sm) var(--space-lg);
+}
+
+.at-sidebar__link--logout {
+    color: rgba(255, 255, 255, 0.82);
+    background: transparent;
+    border: none;
+    width: 100%;
+    box-sizing: border-box;
+    cursor: pointer;
+    font-family: inherit;
+    text-align: left;
+}
+
+/* ==========================================================================
+   4. CARD — white, 12px radius, 1px border, subtle Navy-tinted shadow
+   ========================================================================== */
+.at-card {
+    background: var(--color-surface-container-lowest);
+    border: 1px solid var(--color-card-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--elevation-raised);
+    padding: var(--space-md);
+    box-sizing: border-box;
+}
+
+.at-card__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-md);
+    margin-bottom: var(--space-md);
+}
+
+.at-card__title {
+    margin: 0;
+    font-size: var(--font-size-h3);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-h3);
+    color: var(--color-on-surface);
+}
+
+.at-card__subtitle {
+    margin: var(--space-xs) 0 0;
+    font-size: var(--font-size-body-md);
+    font-weight: var(--font-weight-regular);
+    color: var(--color-on-surface-variant);
+}
+
+/* Only interactive cards lift; static cards must not imply clickability. */
+.at-card--interactive {
+    cursor: pointer;
+    transition: box-shadow var(--duration-normal) var(--easing-standard),
+                border-color var(--duration-normal) var(--easing-standard);
+}
+
+.at-card--interactive:hover {
+    box-shadow: var(--elevation-overlay);
+    border-color: var(--color-outline-variant);
+}
+
+.at-card--interactive:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: 2px;
+}
+
+/* Card grid on the 8px scale; collapses to one column on small screens. */
+.at-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: var(--space-lg);
+}
+
+/* ==========================================================================
+   5. STATUS BADGE — fully pill-shaped to distinguish from buttons
+   ========================================================================== */
+.at-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-base);
+    padding: var(--space-xs) var(--space-sm);
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-label-sm);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-label);
+    letter-spacing: var(--letter-spacing-label);
+    white-space: nowrap;
+}
+
+/* The dot means colour is never the only status signal. */
+.at-badge::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: var(--radius-full);
+    background: currentColor;
+    flex-shrink: 0;
+}
+
+.at-badge--pending {
+    background: var(--status-pending-bg);
+    color: var(--status-pending-fg);
+}
+
+/* Active and Verified share the green treatment */
+.at-badge--active,
+.at-badge--verified {
+    background: var(--status-active-bg);
+    color: var(--status-active-fg);
+}
+
+/* Cancelled and Rejected share the red treatment */
+.at-badge--cancelled,
+.at-badge--rejected {
+    background: var(--status-cancelled-bg);
+    color: var(--status-cancelled-fg);
+}
+
+.at-badge--completed {
+    background: var(--status-completed-bg);
+    color: var(--status-completed-fg);
+}
+
+/* ==========================================================================
+   6. BUTTONS — primary CTA is Accent Orange, 12px radius, 600 weight
+   ========================================================================== */
+.at-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-base);
+    min-height: 44px;
+    padding: var(--space-sm) var(--space-lg);
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
+    font-family: inherit;
+    font-size: var(--font-size-body-md);
+    font-weight: var(--font-weight-semibold);
+    cursor: pointer;
+    transition: background-color var(--duration-fast) var(--easing-standard),
+                border-color var(--duration-fast) var(--easing-standard),
+                color var(--duration-fast) var(--easing-standard);
+}
+
+.at-btn:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: 2px;
+}
+
+.at-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.at-btn--primary {
+    background: var(--color-secondary-container);
+    color: var(--color-on-secondary);
+}
+
+.at-btn--primary:hover:not(:disabled) {
+    background: var(--color-secondary);
+}
+
+.at-btn--secondary {
+    background: var(--color-surface-container-lowest);
+    border-color: var(--color-outline-variant);
+    color: var(--color-primary);
+}
+
+.at-btn--secondary:hover:not(:disabled) {
+    background: var(--color-surface-container-low);
+}
+
+.at-btn--danger {
+    background: var(--color-error);
+    color: var(--color-on-error);
+}
+
+/* ==========================================================================
+   7. RESPONSIVE — the 280px rail collapses below 1024px
+   ========================================================================== */
+@media (max-width: 1024px) {
+    .at-sidebar {
+        transform: translateX(-100%);
+        transition: transform var(--duration-normal) var(--easing-standard);
+    }
+
+    .at-sidebar.is-open {
+        transform: translateX(0);
+        box-shadow: var(--elevation-overlay);
+    }
+
+    .at-main {
+        margin-left: 0;
+    }
+
+    .at-topbar__brand {
+        min-width: 0;
+    }
+}
+
+@media (min-width: 1025px) {
+    /* The hamburger is only meaningful while the rail is collapsible. */
+    .at-topbar__menu-btn {
+        display: none;
+    }
+}
+
+@media (max-width: 640px) {
+    .at-content {
+        padding: var(--space-md) var(--space-margin-mobile);
+    }
+
+    .at-card-grid {
+        grid-template-columns: 1fr;
+        gap: var(--space-md);
+    }
+}
+
+/* ==========================================================================
+   8. CHROME VARIANTS FROM THE COORDINATOR REFERENCE DESIGN
+   The Phase 1 defaults above were derived from docs/design-system.md prose
+   alone (no reference image existed yet). The coordinator reference shows a
+   different arrangement: the brand lockup lives at the top of the sidebar and
+   the top bar is a light, inset strip over the content area only.
+
+   These are opt-in modifier classes so admin/ and driver/ keep the Phase 1
+   default chrome until their own reference images are reviewed.
+   ========================================================================== */
+
+/* --- Light, inset top bar ------------------------------------------------- */
+.at-topbar--inset {
+    left: var(--sidebar-width);
+    background: var(--color-surface-container-lowest);
+    color: var(--color-on-surface);
+    border-bottom: 1px solid var(--color-card-border);
+    /* Reference right-aligns the whole cluster */
+    justify-content: flex-end;
+    gap: var(--space-md);
+}
+
+.at-topbar--inset .at-icon-btn {
+    color: var(--color-on-surface-variant);
+}
+
+.at-topbar--inset .at-icon-btn:hover {
+    background: var(--color-surface-container);
+}
+
+.at-topbar--inset .at-icon-btn:focus-visible {
+    outline-color: var(--focus-ring-color);
+}
+
+.at-topbar__portal-label {
+    font-size: var(--font-size-body-md);
+    font-weight: var(--font-weight-bold);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-primary-container);
+    white-space: nowrap;
+}
+
+/* Standalone status dot (not attached to a button) */
+.at-topbar__status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: var(--radius-full);
+    background: var(--color-error);
+    flex-shrink: 0;
+}
+
+/* When the top bar is inset, the sidebar owns the full height. */
+.at-sidebar--full {
+    top: 0;
+}
+
+@media (max-width: 1024px) {
+    .at-topbar--inset {
+        left: 0;
+        justify-content: space-between;
+    }
+}
+
+/* --- Brand lockup inside the sidebar ------------------------------------- */
+.at-sidebar__brand {
+    display: block;
+    padding: var(--space-lg) var(--space-md) var(--space-md);
+    text-decoration: none;
+    color: inherit;
+}
+
+.at-sidebar__brand-name {
+    display: block;
+    font-size: var(--font-size-h3);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--line-height-h3);
+    letter-spacing: 0.02em;
+    color: var(--color-on-primary);
+}
+
+.at-sidebar__brand-role {
+    display: block;
+    margin-top: 2px;
+    font-size: var(--font-size-body-md);
+    font-weight: var(--font-weight-regular);
+    color: var(--color-on-primary-container);
+}
+
+/* --- Sidebar call-to-action ---------------------------------------------- */
+.at-sidebar__cta-wrap {
+    padding: var(--space-md) var(--space-sm) var(--space-base);
+}
+
+.at-sidebar__cta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-base);
+    width: 100%;
+    min-height: 44px;
+    padding: var(--space-sm) var(--space-md);
+    box-sizing: border-box;
+    border: none;
+    border-radius: var(--radius-default);
+    background: var(--color-secondary-container);
+    color: var(--color-on-secondary);
+    font-family: inherit;
+    font-size: var(--font-size-body-md);
+    font-weight: var(--font-weight-semibold);
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color var(--duration-fast) var(--easing-standard);
+}
+
+.at-sidebar__cta:hover {
+    background: var(--color-secondary);
+}
+
+.at-sidebar__cta:focus-visible {
+    outline: var(--focus-ring-width) solid var(--color-on-primary);
+    outline-offset: 2px;
+}
+
+/* --- Secondary nav (Settings / Support) ---------------------------------- */
+.at-sidebar__nav--secondary .at-sidebar__link {
+    min-height: 40px;
+    font-size: var(--font-size-body-md);
+    color: rgba(255, 255, 255, 0.66);
+}
+
+/* --- Disabled nav item --------------------------------------------------- */
+/* Used where the reference shows a destination this repo has no page for. */
+.at-sidebar__link[aria-disabled="true"] {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.at-sidebar__link[aria-disabled="true"]:hover {
+    background: transparent;
+    color: rgba(255, 255, 255, 0.66);
+}
+
+/* --- Sidebar user footer ------------------------------------------------- */
+.at-sidebar__user {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    margin-top: var(--space-md);
+    padding: var(--space-md) var(--space-md) var(--space-lg);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    cursor: pointer;
+}
+
+.at-sidebar__avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    border-radius: var(--radius-full);
+    background: var(--color-primary-container);
+    color: var(--color-on-primary);
+    font-size: var(--font-size-label-sm);
+    font-weight: var(--font-weight-bold);
+}
+
+.at-sidebar__user-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.at-sidebar__user-name {
+    font-size: var(--font-size-body-md);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-on-primary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.at-sidebar__user-role {
+    font-size: var(--font-size-label-sm);
+    color: var(--color-secondary-fixed-dim);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}

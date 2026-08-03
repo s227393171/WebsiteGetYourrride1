@@ -529,11 +529,8 @@ body.dark-mode {
 .profile-modal-overlay.active {
     display: flex;
 }
-<<<<<<< HEAD
 
-=======
 /* Fixed Centered Popup Overlay */
->>>>>>> 32f2232ae138a4fb55333747ba17065f714e0d19
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -579,12 +576,12 @@ body.dark-mode {
 
     .modal-close-btn:hover {
         color: #0f172a;
-<<<<<<< HEAD
     }
 
 #liveClock {
     letter-spacing: 0.5px;
 }
+
 @keyframes scaleUp {
     from {
         transform: scale(0.95);
@@ -596,6 +593,3 @@ body.dark-mode {
         opacity: 1;
     }
 }
-=======
-    }
->>>>>>> 32f2232ae138a4fb55333747ba17065f714e0d19

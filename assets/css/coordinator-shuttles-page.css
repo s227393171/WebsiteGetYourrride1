@@ -1,0 +1,81 @@
+/* ==========================================================================
+   COORDINATOR — MANAGE SHUTTLES
+   Screen-specific styles for coordinator/manage-shuttles.html, built from the
+   supplied reference design. Tokens from docs/design-system.md.
+
+   Requires: design-tokens.css, shared-layout.css, then this file.
+   ========================================================================== */
+
+/* 1. PAGE HEADER */
+.fleet-page-header { display:flex; align-items:flex-start; justify-content:space-between; gap:var(--space-md); flex-wrap:wrap; margin-bottom:var(--space-lg); }
+.fleet-page-header__text h1 { margin:0 0 var(--space-xs); font-size:var(--font-size-h1); font-weight:var(--font-weight-semibold); line-height:var(--line-height-h1); color:var(--color-primary-container); }
+.fleet-page-header__text p { margin:0; font-size:var(--font-size-body-md); color:var(--color-on-surface-variant); max-width:480px; }
+
+/* 2. STAT CARDS — 4 tiles */
+.fleet-stats { display:grid; grid-template-columns:repeat(4,1fr); gap:var(--space-md); margin-bottom:var(--space-lg); }
+.fleet-stat { display:flex; align-items:center; gap:var(--space-sm); padding:var(--space-md); border:1px solid var(--color-card-border); border-radius:var(--radius-md); background:var(--color-surface-container-lowest); box-shadow:var(--elevation-raised); }
+.fleet-stat__icon { display:flex; align-items:center; justify-content:center; width:40px; height:40px; flex-shrink:0; border-radius:var(--radius-default); }
+.fleet-stat__icon svg { width:20px; height:20px; stroke-width:2; }
+.fleet-stat__body { display:flex; flex-direction:column; }
+.fleet-stat__label { font-size:var(--font-size-label-sm); font-weight:var(--font-weight-semibold); letter-spacing:0.04em; text-transform:uppercase; color:var(--color-on-surface-variant); }
+.fleet-stat__value { font-size:var(--font-size-h2); font-weight:var(--font-weight-bold); line-height:var(--line-height-h2); color:var(--color-primary-container); }
+.fleet-stat__pill { margin-left:auto; padding:var(--space-xs) var(--space-base); border-radius:var(--radius-full); font-size:11px; font-weight:var(--font-weight-semibold); white-space:nowrap; }
+
+.fleet-stat--total .fleet-stat__icon { background:var(--color-primary-fixed); color:var(--color-primary-container); }
+.fleet-stat--total .fleet-stat__pill { background:rgba(26,46,90,0.1); color:var(--color-primary-container); }
+.fleet-stat--active .fleet-stat__icon { background:var(--status-active-bg); color:var(--status-active-fg); }
+.fleet-stat--active .fleet-stat__pill { background:var(--status-active-bg); color:var(--status-active-fg); }
+.fleet-stat--maint .fleet-stat__icon { background:var(--color-secondary-fixed); color:var(--color-secondary); }
+.fleet-stat--maint .fleet-stat__pill { background:var(--color-secondary-fixed); color:var(--color-secondary); }
+.fleet-stat--cap .fleet-stat__icon { background:var(--color-surface-container-highest); color:var(--color-on-surface-variant); }
+
+/* 3. FLEET PANEL */
+.fleet-panel { background:var(--color-surface-container-lowest); border:1px solid var(--color-card-border); border-radius:var(--radius-md); box-shadow:var(--elevation-raised); overflow:hidden; }
+.fleet-panel__header { display:flex; align-items:center; justify-content:space-between; gap:var(--space-md); padding:var(--space-md) var(--space-lg); }
+.fleet-panel__title { margin:0; font-size:var(--font-size-h3); font-weight:var(--font-weight-semibold); color:var(--color-primary-container); }
+
+/* 4. FLEET TABLE */
+.fleet-table-scroll { overflow-x:auto; }
+.fleet-table { width:100%; border-collapse:collapse; font-size:var(--font-size-body-md); }
+.fleet-table thead th { padding:var(--space-sm) var(--space-md); background:var(--color-surface-container-low); border-top:1px solid var(--color-card-border); border-bottom:1px solid var(--color-card-border); text-align:left; font-size:var(--font-size-label-sm); font-weight:var(--font-weight-semibold); letter-spacing:0.06em; text-transform:uppercase; color:var(--color-on-surface-variant); white-space:nowrap; }
+.fleet-table tbody td { padding:var(--space-md); border-bottom:1px solid var(--color-surface-container); vertical-align:middle; }
+.fleet-table tbody tr:last-child td { border-bottom:none; }
+.fleet-table tbody tr { transition:background-color var(--duration-fast) var(--easing-standard); }
+.fleet-table tbody tr:hover { background:var(--color-surface-container-low); }
+
+/* Shuttle name cell */
+.fleet-name { display:flex; align-items:center; gap:var(--space-sm); }
+.fleet-name__dot { width:10px; height:10px; border-radius:var(--radius-full); flex-shrink:0; background:var(--color-primary-container); }
+.fleet-name__text { display:flex; flex-direction:column; }
+.fleet-name__title { font-weight:var(--font-weight-semibold); color:var(--color-primary-container); }
+.fleet-name__sub { font-size:var(--font-size-label-sm); color:var(--color-on-surface-variant); margin-top:2px; }
+
+/* Availability cell */
+.fleet-avail { display:inline-flex; align-items:center; gap:var(--space-base); }
+.fleet-avail__dot { width:8px; height:8px; border-radius:var(--radius-full); }
+.fleet-avail__dot--ok { background:var(--status-active-dot); }
+.fleet-avail__dot--off { background:var(--color-outline); }
+.fleet-avail__label { font-size:var(--font-size-body-md); }
+.fleet-avail__label--ok { color:var(--status-active-fg); }
+.fleet-avail__label--off { color:var(--color-outline); }
+
+/* Action buttons */
+.fleet-actions { display:flex; align-items:center; gap:var(--space-base); }
+.fleet-action-btn { display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px; padding:0; border:1px solid var(--color-card-border); border-radius:var(--radius-default); background:var(--color-surface-container-lowest); color:var(--color-on-surface-variant); cursor:pointer; transition:background-color var(--duration-fast) var(--easing-standard), border-color var(--duration-fast) var(--easing-standard); }
+.fleet-action-btn:hover { background:var(--color-surface-container-low); border-color:var(--color-outline-variant); }
+.fleet-action-btn:focus-visible { outline:var(--focus-ring-width) solid var(--focus-ring-color); outline-offset:2px; }
+.fleet-action-btn--danger:hover { background:var(--color-error-container); border-color:var(--color-error); color:var(--color-error); }
+.fleet-action-btn svg { width:16px; height:16px; stroke-width:2; }
+
+/* 5. PANEL FOOTER */
+.fleet-panel__footer { display:flex; align-items:center; justify-content:space-between; gap:var(--space-md); padding:var(--space-md) var(--space-lg); border-top:1px solid var(--color-card-border); }
+.fleet-count { font-size:var(--font-size-body-md); color:var(--color-on-surface-variant); }
+.fleet-count strong { color:var(--color-primary-container); }
+
+/* 6. EMPTY/ERROR */
+.fleet-state-row td { padding:var(--space-xl) var(--space-md); text-align:center; color:var(--color-on-surface-variant); }
+.fleet-state-row--error td { color:var(--color-error); }
+
+/* 7. RESPONSIVE */
+@media(max-width:1280px){ .fleet-stats{grid-template-columns:repeat(2,1fr);} }
+@media(max-width:640px){ .fleet-stats{grid-template-columns:1fr;} .fleet-page-header{flex-direction:column;} .fleet-panel__footer{flex-direction:column;align-items:flex-start;} }

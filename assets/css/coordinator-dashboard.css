@@ -1,0 +1,695 @@
+/* ==========================================================================
+   COORDINATOR — OPERATIONS DASHBOARD
+   Screen-specific styles for coordinator/dashboard.html, built from the
+   supplied reference design. Layout comes from the reference; all colour,
+   type, spacing and radius values come from the Academic Transit tokens.
+
+   Requires: design-tokens.css, then shared-layout.css, then this file.
+   ========================================================================== */
+
+/* ==========================================================================
+   1. PAGE HEADING
+   ========================================================================== */
+.ops-heading {
+    margin: 0 0 var(--space-xs);
+    font-size: var(--font-size-h1);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-h1);
+    color: var(--color-primary-container);
+}
+
+.ops-subheading {
+    margin: 0 0 var(--space-lg);
+    font-size: var(--font-size-body-lg);
+    font-weight: var(--font-weight-regular);
+    color: var(--color-on-surface-variant);
+}
+
+/* ==========================================================================
+   2. STAT CARDS
+   Four tinted summary tiles. The first is a solid Navy tile; the rest are
+   low-opacity tints, matching the reference.
+   ========================================================================== */
+.ops-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-md);
+    margin-bottom: var(--space-lg);
+}
+
+.ops-stat {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+    padding: var(--space-md);
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
+    box-sizing: border-box;
+}
+
+.ops-stat__top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-base);
+}
+
+/* Icon sits in a rounded square, per the reference */
+.ops-stat__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    border-radius: var(--radius-default);
+}
+
+.ops-stat__icon svg {
+    width: 20px;
+    height: 20px;
+    stroke-width: 2;
+}
+
+/* Delta / context pill in the top-right corner */
+.ops-stat__pill {
+    padding: var(--space-xs) var(--space-base);
+    border-radius: var(--radius-full);
+    font-size: 11px;
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-label);
+    letter-spacing: var(--letter-spacing-label);
+    white-space: nowrap;
+}
+
+.ops-stat__label {
+    font-size: var(--font-size-label-sm);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-label);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.ops-stat__value {
+    margin: var(--space-base) 0 0;
+    font-size: var(--font-size-h1);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--line-height-h1);
+}
+
+/* --- Variant: Navy (Total Shuttles) --- */
+.ops-stat--navy {
+    background: var(--color-primary-container);
+}
+
+.ops-stat--navy .ops-stat__icon {
+    background: rgba(255, 255, 255, 0.14);
+    color: var(--color-on-primary);
+}
+
+.ops-stat--navy .ops-stat__pill {
+    background: rgba(255, 255, 255, 0.16);
+    color: var(--color-on-primary);
+}
+
+.ops-stat--navy .ops-stat__label {
+    color: var(--color-on-primary-container);
+}
+
+.ops-stat--navy .ops-stat__value {
+    color: var(--color-on-primary);
+}
+
+/* --- Variant: Green (Active Schedules) --- */
+.ops-stat--green {
+    background: var(--status-active-bg);
+    border-color: rgba(30, 142, 62, 0.18);
+}
+
+.ops-stat--green .ops-stat__icon {
+    background: rgba(30, 142, 62, 0.14);
+    color: var(--status-active-fg);
+}
+
+.ops-stat--green .ops-stat__pill {
+    background: rgba(30, 142, 62, 0.16);
+    color: var(--status-active-fg);
+}
+
+.ops-stat--green .ops-stat__label {
+    color: var(--color-on-surface-variant);
+}
+
+.ops-stat--green .ops-stat__value {
+    color: var(--color-primary-container);
+}
+
+/* --- Variant: Blue-grey (Total Bookings) --- */
+.ops-stat--blue {
+    background: var(--color-primary-fixed);
+    border-color: rgba(26, 46, 90, 0.14);
+}
+
+.ops-stat--blue .ops-stat__icon {
+    background: rgba(26, 46, 90, 0.12);
+    color: var(--color-primary-container);
+}
+
+.ops-stat--blue .ops-stat__pill {
+    background: rgba(26, 46, 90, 0.14);
+    color: var(--color-primary-container);
+}
+
+.ops-stat--blue .ops-stat__label {
+    color: var(--color-on-surface-variant);
+}
+
+.ops-stat--blue .ops-stat__value {
+    color: var(--color-primary-container);
+}
+
+/* --- Variant: Amber (Drivers On Duty) --- */
+.ops-stat--amber {
+    background: var(--color-secondary-fixed);
+    border-color: rgba(252, 130, 12, 0.24);
+}
+
+.ops-stat--amber .ops-stat__icon {
+    background: rgba(252, 130, 12, 0.18);
+    color: var(--color-secondary);
+}
+
+.ops-stat--amber .ops-stat__pill {
+    background: rgba(252, 130, 12, 0.2);
+    color: var(--color-on-secondary-container);
+}
+
+.ops-stat--amber .ops-stat__label {
+    color: var(--color-on-surface-variant);
+}
+
+.ops-stat--amber .ops-stat__value {
+    color: var(--color-secondary-container);
+}
+
+/* Marks a figure this repo's API cannot currently supply. */
+.ops-stat__value--unavailable,
+.ops-stat__pill--unavailable {
+    opacity: 0.55;
+}
+
+/* ==========================================================================
+   3. LIVE OPERATIONS PANEL
+   ========================================================================== */
+.ops-panel {
+    background: var(--color-surface-container-lowest);
+    border: 1px solid var(--color-card-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--elevation-raised);
+    overflow: hidden;
+}
+
+.ops-panel__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-md);
+    padding: var(--space-md) var(--space-lg);
+}
+
+.ops-panel__title {
+    margin: 0;
+    font-size: var(--font-size-h3);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-h3);
+    color: var(--color-primary-container);
+}
+
+/* "Live Updates" pill with a pulsing dot */
+.ops-live-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-base);
+    padding: var(--space-xs) var(--space-sm);
+    border-radius: var(--radius-full);
+    background: var(--status-active-bg);
+    color: var(--status-active-fg);
+    font-size: var(--font-size-label-sm);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-label);
+}
+
+.ops-live-pill__dot {
+    width: 7px;
+    height: 7px;
+    border-radius: var(--radius-full);
+    background: var(--status-active-dot);
+    animation: ops-pulse 2s ease-in-out infinite;
+}
+
+@keyframes ops-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.35; }
+}
+
+/* ==========================================================================
+   4. OPERATIONS TABLE
+   ========================================================================== */
+.ops-table-scroll {
+    overflow-x: auto;
+}
+
+.ops-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--font-size-body-md);
+}
+
+.ops-table thead th {
+    padding: var(--space-sm) var(--space-md);
+    background: var(--color-surface-container-low);
+    border-top: 1px solid var(--color-card-border);
+    border-bottom: 1px solid var(--color-card-border);
+    text-align: left;
+    font-size: var(--font-size-label-sm);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-label);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-on-surface-variant);
+    white-space: nowrap;
+}
+
+.ops-table tbody td {
+    padding: var(--space-md);
+    border-bottom: 1px solid var(--color-surface-container);
+    vertical-align: middle;
+    color: var(--color-on-surface);
+}
+
+.ops-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.ops-table tbody tr {
+    transition: background-color var(--duration-fast) var(--easing-standard);
+}
+
+.ops-table tbody tr:hover {
+    background: var(--color-surface-container-low);
+}
+
+/* --- Shuttle name cell: icon + name + plate --- */
+.ops-shuttle {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.ops-shuttle__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    border-radius: var(--radius-default);
+    background: var(--color-primary-fixed);
+    color: var(--color-primary-container);
+}
+
+.ops-shuttle__icon svg {
+    width: 18px;
+    height: 18px;
+    stroke-width: 2;
+}
+
+.ops-shuttle__name {
+    display: block;
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-on-surface);
+}
+
+.ops-shuttle__plate {
+    display: block;
+    margin-top: 2px;
+    font-size: var(--font-size-label-sm);
+    color: var(--color-on-surface-variant);
+}
+
+/* --- Route cell --- */
+.ops-route {
+    display: block;
+    max-width: 160px;
+    color: var(--color-on-surface);
+}
+
+.ops-route__arrow {
+    color: var(--color-outline);
+    padding: 0 2px;
+}
+
+/* --- Departure cell --- */
+.ops-departure__time {
+    display: block;
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-primary-container);
+}
+
+.ops-departure__note {
+    display: block;
+    margin-top: 2px;
+    font-size: 11px;
+    color: var(--color-on-surface-variant);
+}
+
+.ops-departure__note--late {
+    color: var(--color-error);
+    font-weight: var(--font-weight-semibold);
+}
+
+/* --- Driver cell --- */
+.ops-driver {
+    display: flex;
+    align-items: center;
+    gap: var(--space-base);
+}
+
+/* Initials stand in for the reference's photo avatars: the API exposes no
+   driver image field. */
+.ops-driver__avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+    border-radius: var(--radius-full);
+    background: var(--color-secondary-fixed);
+    color: var(--color-on-secondary-fixed-variant);
+    font-size: 11px;
+    font-weight: var(--font-weight-bold);
+}
+
+.ops-driver__name {
+    color: var(--color-on-surface);
+}
+
+/* --- Seats cell: meter + count --- */
+.ops-seats__track {
+    width: 68px;
+    height: 6px;
+    border-radius: var(--radius-full);
+    background: var(--color-surface-container-highest);
+    overflow: hidden;
+}
+
+.ops-seats__fill {
+    height: 100%;
+    border-radius: var(--radius-full);
+    background: var(--color-primary-container);
+    transition: width var(--duration-normal) var(--easing-standard);
+}
+
+.ops-seats__fill--warn {
+    background: var(--color-secondary-container);
+}
+
+.ops-seats__fill--done {
+    background: var(--status-completed-dot);
+}
+
+.ops-seats__count {
+    display: block;
+    margin-top: var(--space-xs);
+    font-size: var(--font-size-label-sm);
+    color: var(--color-on-surface-variant);
+}
+
+/* Placeholder shown where the API supplies no seat figures. */
+.ops-unavailable {
+    color: var(--color-outline);
+    cursor: help;
+}
+
+/* ==========================================================================
+   5. TABLE FOOTER + PAGINATION
+   ========================================================================== */
+.ops-panel__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-md);
+    padding: var(--space-md) var(--space-lg);
+    border-top: 1px solid var(--color-card-border);
+}
+
+.ops-count {
+    font-size: var(--font-size-body-md);
+    color: var(--color-on-surface-variant);
+}
+
+.ops-pager {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+}
+
+.ops-pager__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    height: 36px;
+    padding: 0 var(--space-base);
+    border: 1px solid var(--color-card-border);
+    border-radius: var(--radius-default);
+    background: var(--color-surface-container-lowest);
+    color: var(--color-on-surface-variant);
+    font-family: inherit;
+    font-size: var(--font-size-body-md);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    transition: background-color var(--duration-fast) var(--easing-standard),
+                border-color var(--duration-fast) var(--easing-standard);
+}
+
+.ops-pager__btn:hover:not(:disabled):not(.is-current) {
+    background: var(--color-surface-container-low);
+    border-color: var(--color-outline-variant);
+}
+
+.ops-pager__btn:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: 2px;
+}
+
+.ops-pager__btn.is-current {
+    background: var(--color-primary-container);
+    border-color: var(--color-primary-container);
+    color: var(--color-on-primary);
+    font-weight: var(--font-weight-semibold);
+}
+
+.ops-pager__btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* ==========================================================================
+   6. EMPTY / ERROR ROW STATES
+   ========================================================================== */
+.ops-state-row td {
+    padding: var(--space-xl) var(--space-md);
+    text-align: center;
+    color: var(--color-on-surface-variant);
+}
+
+.ops-state-row--error td {
+    color: var(--color-error);
+}
+
+/* ==========================================================================
+   7. RESPONSIVE
+   ========================================================================== */
+@media (max-width: 1280px) {
+    .ops-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 640px) {
+    .ops-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .ops-panel__header,
+    .ops-panel__footer {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+/* ==========================================================================
+   8. MODALS + PROFILE DROPDOWN
+   This screen intentionally does NOT load styles.css / coordinator.css: those
+   set `* { font-family: 'Segoe UI' }`, which overrides Inter on every element,
+   and `body { display: flex }`, which fights the shared layout.
+
+   The rules below therefore re-provide only the pieces admin-dropdown.js needs,
+   built on the Academic Transit tokens. The contract is unchanged: that script
+   toggles the `active` class on #settingsModal / #supportModal / #profileModal
+   and the `show` class on #profileDropdown.
+   ========================================================================== */
+
+.profile-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1200;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-md);
+    background: var(--elevation-scrim);
+}
+
+.profile-modal-overlay.active {
+    display: flex;
+}
+
+.profile-modal-card {
+    width: 100%;
+    max-width: 440px;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: var(--space-lg);
+    box-sizing: border-box;
+    background: var(--color-surface-container-lowest);
+    border-radius: var(--radius-md);
+    box-shadow: var(--elevation-overlay);
+}
+
+.profile-modal-card h3 {
+    margin: 0 0 var(--space-md);
+    font-size: var(--font-size-h3);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-h3);
+    color: var(--color-primary-container);
+}
+
+.modal-body-content {
+    font-size: var(--font-size-body-md);
+    color: var(--color-on-surface-variant);
+}
+
+.modal-body-content p {
+    margin: 0 0 var(--space-sm);
+}
+
+.modal-body-content label {
+    display: block;
+    margin: var(--space-md) 0 var(--space-xs);
+    font-size: var(--font-size-label-sm);
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: var(--letter-spacing-label);
+    color: var(--color-on-surface);
+}
+
+/* Inputs match the 12px card radius, per the design system */
+.modal-body-content select,
+.modal-body-content input {
+    width: 100%;
+    padding: var(--space-sm);
+    box-sizing: border-box;
+    background: var(--color-surface-container-low);
+    border: 1px solid var(--color-outline-variant);
+    border-radius: var(--radius-md);
+    font-family: inherit;
+    font-size: var(--font-size-body-md);
+    color: var(--color-on-surface);
+}
+
+.modal-body-content select:focus,
+.modal-body-content input:focus {
+    outline: none;
+    border-color: var(--color-primary-container);
+    box-shadow: 0 0 0 2px var(--color-primary-container);
+}
+
+.close-modal-btn {
+    width: 100%;
+    min-height: 44px;
+    margin-top: var(--space-lg);
+    padding: var(--space-sm) var(--space-md);
+    border: none;
+    border-radius: var(--radius-md);
+    background: var(--color-primary-container);
+    color: var(--color-on-primary);
+    font-family: inherit;
+    font-size: var(--font-size-body-md);
+    font-weight: var(--font-weight-semibold);
+    cursor: pointer;
+    transition: background-color var(--duration-fast) var(--easing-standard);
+}
+
+.close-modal-btn:hover {
+    background: var(--color-primary);
+}
+
+.close-modal-btn:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: 2px;
+}
+
+/* --- Sidebar profile dropdown (opens upward above the user block) --------- */
+.sidebar-profile-footer {
+    position: relative;
+}
+
+.profile-dropdown-menu {
+    display: none;
+    position: absolute;
+    bottom: calc(100% - var(--space-base));
+    left: var(--space-sm);
+    right: var(--space-sm);
+    z-index: 1150;
+    padding: var(--space-base);
+    background: var(--color-surface-container-lowest);
+    border-radius: var(--radius-md);
+    box-shadow: var(--elevation-overlay);
+}
+
+.profile-dropdown-menu.show {
+    display: block;
+}
+
+.dropdown-link {
+    display: block;
+    padding: var(--space-sm);
+    border-radius: var(--radius-default);
+    font-size: var(--font-size-body-md);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-on-surface);
+    text-decoration: none;
+    transition: background-color var(--duration-fast) var(--easing-standard);
+}
+
+.dropdown-link:hover {
+    background: var(--color-surface-container-low);
+}
+
+.dropdown-link:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: -2px;
+}
+
+.dropdown-link.logout-action {
+    color: var(--color-error);
+}
+
+.dropdown-divider {
+    margin: var(--space-xs) 0;
+    border: 0;
+    border-top: 1px solid var(--color-card-border);
+}
