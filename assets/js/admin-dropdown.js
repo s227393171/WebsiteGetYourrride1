@@ -90,7 +90,7 @@ function handleLogout() {
     if (confirm("Are you sure you want to sign out of the GetYourRide portal workspace?")) {
         localStorage.clear();
         sessionStorage.clear();
-        window.location.href = "/";
+        window.location.href = "../Login.html";
     }
 }
 
@@ -327,15 +327,31 @@ window.closeProfileModal = function () {
     }
 };
 function handleLogout() {
-    document.getElementById('logoutModal').style.display = 'flex';
+    // Opens the styled logout modal; confirmLogout() handles the actual redirect.
+    const modal = document.getElementById('logoutModal');
+    if (modal) {
+        modal.classList.add('active');
+        modal.style.setProperty("display", "flex", "important");
+    } else {
+        // Fallback if the modal element is missing on this page
+        if (confirm("Log out of this session?")) {
+            localStorage.clear();
+            sessionStorage.clear();
+            window.location.href = "../Login.html";
+        }
+    }
 }
 
 function closeLogoutModal() {
-    document.getElementById('logoutModal').style.display = 'none';
+    const modal = document.getElementById('logoutModal');
+    if (modal) {
+        modal.classList.remove('active');
+        modal.style.setProperty("display", "none", "important");
+    }
 }
 
 function confirmLogout() {
     localStorage.clear();
     sessionStorage.clear();
-    window.location.href = "/";
+    window.location.href = "../Login.html";
 }
