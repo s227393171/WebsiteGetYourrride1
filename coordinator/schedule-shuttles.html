@@ -4,192 +4,73 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Coordinator Portal - Schedule Shuttles</title>
-    <link rel="stylesheet" href="../assets/css/styles.css">
-    <link rel="stylesheet" href="../assets/css/coordinator.css">
-    <link rel="stylesheet" href="../assets/css/driver-dashboard.css">
+    <link rel="stylesheet" href="../assets/css/design-tokens.css">
+    <link rel="stylesheet" href="../assets/css/shared-layout.css">
+    <link rel="stylesheet" href="../assets/css/coordinator-dashboard.css">
+    <style>body{margin:0;}</style>
 </head>
-<body>
-    <div class="sidebar">
-        <div class="brand">
-            <h1>GETYOURRIDE</h1>
-            <span>Shuttle Coordinator</span>
-        </div>
-        <ul class="menu-list">
-            <li><a href="dashboard.html" class="menu-item">📋 Dashboard Hub</a></li>
-            <li><a href="manage-shuttles.html" class="menu-item">🚌 Shuttle Management</a></li>
-            <li><a href="schedule-shuttles.html" class="menu-item active">📅 Schedule Shuttles</a></li>
-            <li><a href="manage-drivers.html" class="menu-item">👤 Shuttle Driver Management</a></li>
-        </ul>
+<body class="at-shell">
+    <div data-at-topbar data-inset data-title="Coordinator Portal"></div>
+    <div data-at-sidebar data-role="coordinator" data-active="schedule-shuttles" data-full-height data-brand="GETYOURRIDE" data-brand-role="Shuttle Coordinator" data-secondary-nav data-user-footer></div>
 
-        <div class="sidebar-spacer"></div>
-
-        <ul class="menu-list bottom-menu">
-            <li><a href="#" class="menu-item" onclick="openSettingsModal()">⚙️ Settings</a></li>
-            <li><a href="#" class="menu-item" onclick="openSupportModal()">❓ Support Help</a></li>
-        </ul>
-
-        <div class="sidebar-profile-footer">
-            <div class="sidebar-profile-footer">
-                <!-- ✅ Added an ID to the trigger area if your dropdown toggle needs it -->
-                <div class="profile-trigger-area" id="profileTrigger" onclick="toggleProfileMenu()">
-                    <!-- Added placeholder initials 'SC' for Shuttle Coordinator -->
-                    <div class="avatar-placeholder" style="display: flex; align-items: center; justify-content: center; background: #cbd5e1; color: #0f172a; font-weight: 700; font-size: 12px;">SC</div>
-                    <div class="profile-info-text">
-                        <!-- ✅ FIX: Changed IDs from 'driver...' to 'coordinator...' to match JS -->
-                        <span class="user-display-name" id="coordinatorNameLabel">Loading profile...</span>
-                        <span class="user-display-email" id="coordinatorEmailLabel">connecting to database...</span>
-                    </div>
-                </div>
-            </div>
-            <div class="profile-dropdown-menu" id="profileDropdown">
-                <a href="#" class="dropdown-link" id="btnDropdownProfile" onclick="openProfileModal(event)">👤 View Profile</a>
-
-                <hr class="dropdown-divider">
-                <a href="#" class="dropdown-link logout-action" onclick="handleLogout()">🚪 Logout Portal</a>
-            </div>
-        </div>
-    </div>
-
-    <div class="main-content">
-        <div class="top-navbar">
-            <div class="nav-breadcrumb">Management &gt; <strong>Assignment Scheduler</strong></div>
-
-            <div class="top-navbar-right">
-                <div class="portal-badge">
-                    <span id="liveClock" style="font-family: monospace; font-weight: 700; color: #ff7a00; margin-right: 15px;">00:00:00</span>
-                    Coordinator Portal
-                </div>
-                <button class="top-logout-btn" onclick="handleLogout()"> Logout</button>
-            </div>
+    <main class="at-main"><div class="at-content">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:var(--space-md);flex-wrap:wrap;margin-bottom:var(--space-lg);">
+            <div><h1 class="ops-heading">Schedule Shuttles</h1><p class="ops-subheading" style="margin-bottom:0;">View, create and manage all shuttle dispatch assignments.</p></div>
+            <a href="create-schedule.html" class="at-btn at-btn--primary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;stroke-width:2;" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg> Create Schedule</a>
         </div>
 
-        <div class="content-body">
-            <div class="scheduler-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
-                <div>
-                    <h2>Schedule Transit Routes</h2>
-                    <p class="subtitle">Map fleet vehicles and authorized operators to active departure routes.</p>
-                </div>
-                <button class="btn btn-primary" onclick="window.location.href='create-schedule.html'" style="background: #f97316; border: none; font-weight: 600; padding: 10px 20px; border-radius: 8px; color: white; cursor: pointer;">
-                    + Create New Schedule
-                </button>
-            </div>
+        <section class="ops-stats" aria-label="Schedule statistics">
+            <article class="ops-stat ops-stat--navy"><div class="ops-stat__top"><span class="ops-stat__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span></div><div><p class="ops-stat__label">Total Schedules</p><p class="ops-stat__value" id="statTotal">&mdash;</p></div></article>
+            <article class="ops-stat ops-stat--green"><div class="ops-stat__top"><span class="ops-stat__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m9 12 2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg></span></div><div><p class="ops-stat__label">Scheduled Today</p><p class="ops-stat__value" id="statToday">&mdash;</p></div></article>
+            <article class="ops-stat ops-stat--blue"><div class="ops-stat__top"><span class="ops-stat__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17h16M4 17V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v11"/><path d="M4 11h16"/><circle cx="7.5" cy="17" r="1.5"/><circle cx="16.5" cy="17" r="1.5"/></svg></span></div><div><p class="ops-stat__label">Shuttles Deployed</p><p class="ops-stat__value" id="statShuttles">&mdash;</p></div></article>
+            <article class="ops-stat ops-stat--amber"><div class="ops-stat__top"><span class="ops-stat__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg></span></div><div><p class="ops-stat__label">Drivers Assigned</p><p class="ops-stat__value" id="statDrivers">&mdash;</p></div></article>
+        </section>
 
-            <div class="table-card">
-                <table class="scheduler-table">
-                    <thead>
-                        <tr>
-                            <th>ROUTE NAME</th>
-                            <th>DATE</th>
-                            <th>DEPARTURE TIME</th>
-                            <th>ASSIGNED SHUTTLE</th>
-                            <th>ASSIGNED OPERATOR</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="scheduleTableBody">
-                        <tr>
-                            <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 20px;">Streaming master dispatch allocations...</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
+        <section class="ops-panel" aria-labelledby="schedPanelTitle">
+            <div class="ops-panel__header"><h2 class="ops-panel__title" id="schedPanelTitle">All Shuttle Schedules</h2><span class="ops-live-pill"><span class="ops-live-pill__dot"></span>Live</span></div>
+            <div class="ops-table-scroll"><table class="ops-table"><thead><tr><th>Shuttle</th><th>Route</th><th>Date</th><th>Departure</th><th>Driver</th><th>Seats</th><th>Status</th></tr></thead><tbody id="schedTableBody"><tr class="ops-state-row"><td colspan="7">Loading schedules...</td></tr></tbody></table></div>
+            <div class="ops-panel__footer"><span class="ops-count" id="schedCount">Loading...</span><nav class="ops-pager" id="schedPager" aria-label="Schedule pages"></nav></div>
+        </section>
+    </div></main>
 
-    <div class="modal-overlay profile-modal-overlay" id="scheduleModal">
-        <div class="profile-modal-card modal-card">
-            <h3>Generate Fleet Route Dispatch</h3>
-            <hr class="dropdown-divider" style="margin-bottom: 15px;">
-            <form id="frmScheduleAsset" onsubmit="handleScheduleFormSubmit(event)">
-                <input type="hidden" id="scheduleId" value="">
-                <div class="form-group" style="margin-bottom: 12px;">
-                    <label style="display:block; margin-bottom:5px; font-weight:600; font-size:13px;">Select Route Path Corridor</label>
-                    <select id="ddlRouteAsset" required style="width:100%; padding:8px; border-radius:6px; border:1px solid #cbd5e1; outline:none; box-sizing:border-box;"></select>
-                </div>
-                <div class="form-group" style="margin-bottom: 12px;">
-                    <label style="display:block; margin-bottom:5px; font-weight:600; font-size:13px;">Target Calendar Run Date</label>
-                    <input type="date" id="txtScheduleDate" required style="width:100%; padding:8px; border-radius:6px; border:1px solid #cbd5e1; box-sizing:border-box;">
-                </div>
-                <div class="form-group" style="margin-bottom: 12px;">
-                    <label style="display:block; margin-bottom:5px; font-weight:600; font-size:13px;">Departure Clock Timestamp</label>
-                    <input type="time" id="txtDepartureTime" required style="width:100%; padding:8px; border-radius:6px; border:1px solid #cbd5e1; box-sizing:border-box;">
-                </div>
-                <div class="form-group" style="margin-bottom: 12px;">
-                    <label style="display:block; margin-bottom:5px; font-weight:600; font-size:13px;">Assign Fleet Vehicle Asset</label>
-                    <select id="ddlShuttleAsset" required style="width:100%; padding:8px; border-radius:6px; border:1px solid #cbd5e1; outline:none; box-sizing:border-box;"></select>
-                </div>
-                <div class="form-group" style="margin-bottom: 20px;">
-                    <label style="display:block; margin-bottom:5px; font-weight:600; font-size:13px;">Assign Verified Driver</label>
-                    <select id="ddlDriverAsset" required style="width:100%; padding:8px; border-radius:6px; border:1px solid #cbd5e1; outline:none; box-sizing:border-box;"></select>
-                </div>
-                <div class="modal-actions" style="display:flex; gap:10px; justify-content:flex-end;">
-                    <button type="button" id="btnCancelModal" onclick="closeScheduleModalContainer()" class="close-modal-btn btn-secondary" style="margin:0; background:#64748b; width:auto; padding:8px 16px;">Cancel</button>
-                    <button type="submit" class="close-modal-btn btn-submit" style="margin:0; background:#f97316; width:auto; padding:8px 16px; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer;">Save Assignment</button>
-                </div>
-            </form>
-        </div>
-    </div>
+    <div class="profile-modal-overlay" id="profileModal"><div class="profile-modal-card" style="width:100%;max-width:440px;padding:var(--space-lg);background:var(--color-surface-container-lowest);border-radius:var(--radius-md);box-shadow:var(--elevation-overlay);"><h3 style="margin:0 0 var(--space-md);font-size:var(--font-size-h3);font-weight:var(--font-weight-semibold);color:var(--color-primary-container);">Coordinator Profile</h3><div class="modal-body-content" style="font-size:var(--font-size-body-md);color:var(--color-on-surface-variant);line-height:1.8;"><p><strong>Full Name:</strong> <span id="modalFullName">Loading...</span></p><p><strong>Personnel ID:</strong> <span id="modalIdNumber">Loading...</span></p><p><strong>Email:</strong> <span id="modalEmail">Loading...</span></p><p><strong>Role:</strong> <span class="at-badge at-badge--verified" id="modalRole">Loading...</span></p></div><button type="button" class="at-btn at-btn--secondary" style="width:100%;margin-top:var(--space-lg);" onclick="closeProfileModal()">Close</button></div></div>
+    <div class="profile-modal-overlay" id="settingsModal"><div class="profile-modal-card" style="width:100%;max-width:440px;padding:var(--space-lg);background:var(--color-surface-container-lowest);border-radius:var(--radius-md);box-shadow:var(--elevation-overlay);"><h3 style="margin:0 0 var(--space-md);font-size:var(--font-size-h3);font-weight:var(--font-weight-semibold);color:var(--color-primary-container);">Settings</h3><div class="modal-body-content"><label style="display:block;margin:var(--space-md) 0 var(--space-xs);font-weight:600;font-size:12px;">Theme</label><select id="themeSelect" style="width:100%;padding:8px;border-radius:8px;border:1px solid var(--color-outline-variant);"><option value="light">Light</option><option value="dark">Dark</option></select></div><button type="button" class="at-btn at-btn--primary" style="width:100%;margin-top:var(--space-lg);" onclick="closeSettingsModal()">Save</button></div></div>
+    <div class="profile-modal-overlay" id="supportModal"><div class="profile-modal-card" style="width:100%;max-width:440px;padding:var(--space-lg);background:var(--color-surface-container-lowest);border-radius:var(--radius-md);box-shadow:var(--elevation-overlay);"><h3 style="margin:0 0 var(--space-md);font-size:var(--font-size-h3);font-weight:var(--font-weight-semibold);color:var(--color-primary-container);">Support</h3><div class="modal-body-content" style="font-size:var(--font-size-body-md);color:var(--color-on-surface-variant);"><p><strong>Phone:</strong> +27 (0) 41 504 1111</p><p><strong>Email:</strong> support@getyourride.com</p></div><button type="button" class="at-btn at-btn--secondary" style="width:100%;margin-top:var(--space-lg);" onclick="closeSupportModal()">Close</button></div></div>
+    <div class="profile-modal-overlay" id="logoutModal"><div class="profile-modal-card" style="width:100%;max-width:440px;padding:var(--space-lg);background:var(--color-surface-container-lowest);border-radius:var(--radius-md);box-shadow:var(--elevation-overlay);"><h3 style="margin:0 0 var(--space-md);font-size:var(--font-size-h3);font-weight:var(--font-weight-semibold);color:var(--color-primary-container);">Sign out?</h3><p style="margin:0 0 var(--space-lg);font-size:14px;color:var(--color-on-surface-variant);">You will be returned to the login screen.</p><div style="display:flex;gap:var(--space-sm);"><button type="button" class="at-btn at-btn--secondary" style="flex:1;" onclick="closeLogoutModal()">Cancel</button><button type="button" class="at-btn at-btn--danger" style="flex:1;" onclick="confirmLogout()">Sign out</button></div></div></div>
 
-    <div class="profile-modal-overlay" id="profileModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 9999;">
-        <div class="profile-modal-card">
-            <h3>Coordinator Profile Card</h3>
-            <hr style="border:0; border-top:1px solid #e2e8f0; margin: 12px 0 20px 0;">
-
-            <div style="text-align: center; margin-bottom: 20px;">
-                <div class="avatar-circle" style="width: 64px; height: 64px; font-size: 1.5rem; margin: 0 auto 12px auto; display: flex; align-items: center; justify-content: center; background: #e2e8f0; border-radius: 50%;">SC</div>
-            </div>
-
-            <div class="modal-body-content" style="margin-bottom: 20px; line-height: 1.8;">
-                <p><strong>Full Name:</strong> <span id="modalFullName" style="color: #334155; font-weight: 600;">Loading...</span></p>
-                <p><strong>Personnel ID Number:</strong> <span id="modalIdNumber" style="color: #334155; font-weight: 600;">Loading...</span></p>
-                <p><strong>System Email:</strong> <span id="modalEmail" style="color: #334155; font-weight: 600;">Loading...</span></p>
-                <p><strong>Assigned Role:</strong> <span id="modalRole" style="background: #e0f2fe; color: #0369a1; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 600;">Loading...</span></p>
-            </div>
-
-            <div class="modal-actions">
-                <button type="button" class="close-modal-btn" onclick="closeProfileModal()" style="width: 100%; background: #64748b; color: white; border: none; padding: 10px; border-radius: 6px; font-weight: 600; cursor: pointer;">Close Reference</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="profile-modal-overlay" id="settingsModal">
-        <div class="profile-modal-card">
-            <h3>⚙️ Portal Settings</h3>
-            <div class="modal-body-content">
-                <label style="display:block; margin: 10px 0 5px; font-weight:600; font-size:13px;">Dashboard Theme</label>
-                <select id="themeSelect" style="width:100%; padding:8px; border-radius:6px; border:1px solid #cbd5e1; outline:none;">
-                    <option value="light">Default Light Mode</option>
-                    <option value="dark">High Contrast Dark Mode</option>
-                </select>
-                <label style="display:block; margin: 15px 0 5px; font-weight:600; font-size:13px;">Refresh Frequency</label>
-                <select id="refreshSelect" style="width:100%; padding:8px; border-radius:6px; border:1px solid #cbd5e1; outline:none;">
-                    <option value="30000">Every 30 Seconds</option>
-                    <option value="60000">Every Minute</option>
-                    <option value="manual">Manual Refresh</option>
-                </select>
-            </div>
-            <button class="close-modal-btn" onclick="closeSettingsModal()">Save & Close</button>
-        </div>
-    </div>
-
-    <div class="profile-modal-overlay" id="supportModal">
-        <div class="profile-modal-card">
-            <h3>❓ Dispatch Support Help</h3>
-            <div class="modal-body-content">
-                <p style="font-size:13px; color:#64748b;">Need immediate assistance with a transit route layout or emergency check-in failure?</p>
-                <div style="background:#f8fafc; padding:12px; border-radius:6px; border-left:4px solid #ff7a00; margin:10px 0;">
-                    <strong>📞 Transit Control Line:</strong><br>+27 (0) 41 504 1111
-                </div>
-                <div style="background:#f8fafc; padding:12px; border-radius:6px; border-left:4px solid #10b981; margin:10px 0;">
-                    <strong>✉️ Emergency Support:</strong><br>support@getyourride.com
-                </div>
-            </div>
-            <button class="close-modal-btn" onclick="closeSupportModal()">Close Help Desk</button>
-        </div>
-    </div>
-
-    <script src="../assets/js/coordinator-schedules.js"></script>
-
+    <script src="../assets/js/shared-layout.js"></script>
     <script src="../assets/js/admin-dropdown.js"></script>
+    <script>
+    (function(){
+        "use strict";
+        const API="/api/coordinator/schedules",ROWS=6;
+        let data=[],page=1;
+        const BUS='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17h16M4 17V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v11"/><path d="M4 11h16"/><circle cx="7.5" cy="17" r="1.5"/><circle cx="16.5" cy="17" r="1.5"/></svg>';
+        function esc(v){return String(v==null?"":v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+        function to12(t){if(!t||t.indexOf(":")===-1)return t||"\u2014";const p=t.split(":");let h=parseInt(p[0],10);const m=p[1],s=h>=12?"PM":"AM";h=h%12||12;return`${String(h).padStart(2,"0")}:${m} ${s}`;}
+        function initials(n){return String(n||"").trim().split(/\s+/).slice(0,2).map(w=>w[0].toUpperCase()).join("")||"?";}
+        function badge(st){const k=(st||"").toUpperCase();if(k==="SCHEDULED")return{c:"at-badge--pending",l:"Scheduled"};if(k==="CONFIRMED"||k==="IN_PROGRESS")return{c:"at-badge--active",l:k==="CONFIRMED"?"Confirmed":"In Progress"};if(k==="COMPLETED")return{c:"at-badge--completed",l:"Completed"};if(k==="CANCELLED")return{c:"at-badge--cancelled",l:"Cancelled"};return{c:"at-badge--completed",l:st||"Unknown"};}
+        function todayIso(){const d=new Date();return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;}
+        function seatsCell(r){const cap=Number(r.capacity)||0,bk=Number(r.bookedSeats)||0;if(cap<=0)return`<span class="ops-unavailable">&mdash;</span>`;const pct=Math.min(100,Math.round((bk/cap)*100));return`<div class="ops-seats__track"><div class="ops-seats__fill${bk>=cap?" ops-seats__fill--warn":""}" style="width:${pct}%"></div></div><span class="ops-seats__count">${bk} / ${cap}</span>`;}
+
+        function stats(){const s=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};s("statTotal",data.length);s("statToday",data.filter(r=>r.scheduleDate===todayIso()).length);s("statShuttles",new Set(data.map(r=>r.shuttleName)).size);s("statDrivers",new Set(data.filter(r=>r.driverName&&r.driverName!=="Unassigned").map(r=>r.driverName)).size);}
+
+        function render(){
+            const tbody=document.getElementById("schedTableBody");if(!tbody)return;
+            if(!data.length){tbody.innerHTML=`<tr class="ops-state-row"><td colspan="7">No schedules found.</td></tr>`;footer(0,0,0);return;}
+            const total=data.length,pages=Math.max(1,Math.ceil(total/ROWS));if(page>pages)page=pages;
+            const start=(page-1)*ROWS,rows=data.slice(start,start+ROWS);
+            tbody.innerHTML=rows.map(r=>{const b=badge(r.status);const rt=(r.routeName||"").split("\u2794");const rh=rt.length>1?`${esc(rt[0].trim())} <span class="ops-route__arrow">&harr;</span> ${esc(rt[1].trim())}`:esc(r.routeName||"\u2014");const pl=r.licensePlate||"";
+            return`<tr><td><div class="ops-shuttle"><span class="ops-shuttle__icon">${BUS}</span><span><span class="ops-shuttle__name">${esc(r.shuttleName||"Unassigned")}</span>${pl?`<span class="ops-shuttle__plate">${esc(pl)}</span>`:""}</span></div></td><td><span class="ops-route">${rh}</span></td><td>${esc(r.scheduleDate||"")}</td><td><span class="ops-departure__time">${esc(to12(r.departureTime))}</span></td><td><div class="ops-driver"><span class="ops-driver__avatar">${esc(initials(r.driverName))}</span><span class="ops-driver__name">${esc(r.driverName||"Unassigned")}</span></div></td><td>${seatsCell(r)}</td><td><span class="at-badge ${b.c}">${esc(b.l)}</span></td></tr>`;}).join("");
+            footer(rows.length,total,pages);
+        }
+
+        function footer(shown,total,pages){const el=document.getElementById("schedCount");if(el){const s=total?((page-1)*ROWS+1):0,e=Math.min(page*ROWS,total);el.innerHTML=`Showing <strong>${s}</strong>-<strong>${e}</strong> of <strong>${total}</strong> schedules`;}const pg=document.getElementById("schedPager");if(!pg)return;if(pages<=1){pg.innerHTML="";return;}let h=`<button class="ops-pager__btn" data-sp="prev" ${page===1?"disabled":""}>&#8249;</button>`;for(let p=1;p<=pages;p++)h+=`<button class="ops-pager__btn${p===page?" is-current":""}" data-sp="${p}">${p}</button>`;h+=`<button class="ops-pager__btn" data-sp="next" ${page===pages?"disabled":""}>&#8250;</button>`;pg.innerHTML=h;pg.querySelectorAll("[data-sp]").forEach(btn=>btn.addEventListener("click",()=>{const t=btn.getAttribute("data-sp");if(t==="prev")page=Math.max(1,page-1);else if(t==="next")page++;else page=parseInt(t,10);render();}));}
+
+        async function load(){try{const res=await fetch(API);if(!res.ok){document.getElementById("schedTableBody").innerHTML=`<tr class="ops-state-row ops-state-row--error"><td colspan="7">Backend returned ${res.status}.</td></tr>`;return;}data=await res.json();console.log(`[schedule-shuttles] Loaded ${data.length} schedules.`);stats();page=1;render();}catch(err){console.error("[schedule-shuttles]",err);document.getElementById("schedTableBody").innerHTML=`<tr class="ops-state-row ops-state-row--error"><td colspan="7">Connection failed.</td></tr>`;}}
+        if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",load);else load();
+        setInterval(load,30000);
+    })();
+    </script>
 </body>
 </html>
