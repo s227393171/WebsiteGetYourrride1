@@ -1,0 +1,15 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Block Program.cs Edits During Restyle",
+      "trigger": "PreToolUse",
+      "description": "Requires explicit confirmation before any write to Program.cs during the UI restyle pass.",
+      "matcher": "fs_write|str_replace",
+      "action": {
+        "type": "agent",
+        "prompt": "If this edit targets Program.cs, stop and ask for explicit confirmation before proceeding — the web restyle pass should only touch admin/, coordinator/, driver/, and assets/ HTML/CSS/JS files."
+      }
+    }
+  ]
+}

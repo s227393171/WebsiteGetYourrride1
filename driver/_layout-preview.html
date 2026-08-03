@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Driver — Shared Layout Preview</title>
+
+    <!-- Tokens must load before the shared layout stylesheet -->
+    <link rel="stylesheet" href="../assets/css/design-tokens.css">
+    <link rel="stylesheet" href="../assets/css/shared-layout.css">
+    <style>
+        body { margin: 0; }
+    </style>
+</head>
+<body class="at-shell">
+
+    <!-- SHARED TOP APP BAR (injected) -->
+    <div data-at-topbar data-title="Driver Portal"></div>
+
+    <!-- SHARED SIDEBAR (injected, driver nav set) -->
+    <div data-at-sidebar data-role="driver" data-active="dashboard"></div>
+
+    <main class="at-main">
+        <div class="at-content">
+            <section class="at-section">
+                <h1 style="font-size:var(--font-size-h1); font-weight:var(--font-weight-semibold); line-height:var(--line-height-h1); margin:0 0 var(--space-lg);">
+                    Driver Layout Preview
+                </h1>
+
+                <!-- Booking card shape the driver dashboard will reuse in Phase 4 -->
+                <div class="at-card-grid">
+                    <article class="at-card">
+                        <div class="at-card__header">
+                            <div>
+                                <h2 class="at-card__title">North Campus &rarr; Library</h2>
+                                <p class="at-card__subtitle">Departs 08:15</p>
+                            </div>
+                            <span class="at-badge at-badge--active">Active</span>
+                        </div>
+                        <p style="margin:0; color:var(--color-on-surface-variant); font-size:var(--font-size-body-md);">
+                            18 of 22 seats booked
+                        </p>
+                    </article>
+
+                    <article class="at-card">
+                        <div class="at-card__header">
+                            <div>
+                                <h2 class="at-card__title">Library &rarr; Residence</h2>
+                                <p class="at-card__subtitle">Departed 06:40</p>
+                            </div>
+                            <span class="at-badge at-badge--completed">Completed</span>
+                        </div>
+                        <p style="margin:0; color:var(--color-on-surface-variant); font-size:var(--font-size-body-md);">
+                            22 of 22 seats booked
+                        </p>
+                    </article>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script src="../assets/js/shared-layout.js"></script>
+</body>
+</html>

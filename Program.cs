@@ -348,11 +348,11 @@ app.MapGet("/api/coordinator/shuttles", async (IConfiguration config) => {
     await connection.OpenAsync();
 
     string query = @"
-        SELECT v.vehicle_id, v.model, v.registration_number, v.capacity, v.driver_id, v.status,
+        SELECT v.vehicle_id, v.model, v.registration_number, v.capacity, v.driver_id,
                COALESCE(CONCAT(d.first_name, ' ', d.last_name), 'Unassigned') AS DriverName
         FROM vehicle v
         LEFT JOIN driver d ON v.driver_id = d.driver_id
-        WHERE v.status != 'Inactive' AND v.capacity >= 15
+        WHERE v.capacity >= 15
         ORDER BY v.vehicle_id DESC;";
 
     using var command = new MySqlCommand(query, connection);
@@ -366,7 +366,9 @@ app.MapGet("/api/coordinator/shuttles", async (IConfiguration config) => {
             shuttleName = reader["model"].ToString(),
             licensePlate = reader["registration_number"].ToString(),
             capacity = Convert.ToInt32(reader["capacity"]),
-            status = reader["status"].ToString(),
+            // The vehicle table has no status column, so this is reported as
+            // Active to keep the response shape the fleet UI already expects.
+            status = "Active",
             driverId = reader["driver_id"] != DBNull.Value ? Convert.ToInt32(reader["driver_id"]) : (int?)null,
             driverName = reader["DriverName"].ToString()
         });
@@ -379,15 +381,16 @@ app.MapPost("/api/coordinator/shuttles", async (ShuttleDto newShuttle, IConfigur
     using var connection = new MySqlConnection(connectionString);
     await connection.OpenAsync();
 
-    string query = @"INSERT INTO vehicle (driver_id, registration_number, model, capacity, status)
-                     VALUES (@DriverId, @Plate, @Name, @Capacity, @Status);";
+    // No status column exists on vehicle, so it is not written. ShuttleDto keeps
+    // its Status property (unchanged payload shape); the value is simply unused.
+    string query = @"INSERT INTO vehicle (driver_id, registration_number, model, capacity)
+                     VALUES (@DriverId, @Plate, @Name, @Capacity);";
 
     using var command = new MySqlCommand(query, connection);
     command.Parameters.AddWithValue("@DriverId", newShuttle.DriverId);
     command.Parameters.AddWithValue("@Name", newShuttle.ShuttleName);
     command.Parameters.AddWithValue("@Plate", newShuttle.LicensePlate);
     command.Parameters.AddWithValue("@Capacity", newShuttle.Capacity);
-    command.Parameters.AddWithValue("@Status", string.IsNullOrEmpty(newShuttle.Status) ? "Active" : newShuttle.Status);
 
     try
     {
@@ -411,8 +414,7 @@ app.MapPut("/api/coordinator/shuttles/{id:int}", async (int id, ShuttleDto req, 
         SET driver_id = @DriverId,
             model = @Name,
             registration_number = @Plate,
-            capacity = @Capacity,
-            status = @Status
+            capacity = @Capacity
         WHERE vehicle_id = @Id;";
 
     using var command = new MySqlCommand(query, connection);
@@ -421,7 +423,6 @@ app.MapPut("/api/coordinator/shuttles/{id:int}", async (int id, ShuttleDto req, 
     command.Parameters.AddWithValue("@Name", req.ShuttleName);
     command.Parameters.AddWithValue("@Plate", req.LicensePlate);
     command.Parameters.AddWithValue("@Capacity", req.Capacity);
-    command.Parameters.AddWithValue("@Status", string.IsNullOrEmpty(req.Status) ? "Active" : req.Status);
 
     try
     {
@@ -574,15 +575,6 @@ app.MapPost("/api/coordinator/drivers", async (DriverUpsertDto req, IConfigurati
     using var connection = new MySqlConnection(connectionString);
     await connection.OpenAsync();
 
-<<<<<<< HEAD
-// POST: Create a new shuttle driver profile from the coordinator portal
-app.MapPost("/api/coordinator/drivers", async (DriverUpsertDto req, IConfiguration config) => {
-    string connectionString = config.GetConnectionString("DefaultConnection");
-    using var connection = new MySqlConnection(connectionString);
-    await connection.OpenAsync();
-
-=======
->>>>>>> 32f2232ae138a4fb55333747ba17065f714e0d19
     string firstName = req.FullName;
     string lastName = "Driver";
     string[] nameParts = req.FullName.Trim().Split(' ', 2);
@@ -613,10 +605,7 @@ app.MapPost("/api/coordinator/drivers", async (DriverUpsertDto req, IConfigurati
         return Results.Json(new { success = false, message = ex.Message }, statusCode: 500);
     }
 });
-<<<<<<< HEAD
 
-=======
->>>>>>> 32f2232ae138a4fb55333747ba17065f714e0d19
 // DELETE: Remove a driver profile from the roster
 app.MapDelete("/api/coordinator/drivers/{id:int}", async (int id, IConfiguration config) => {
     string connectionString = config.GetConnectionString("DefaultConnection");
@@ -682,11 +671,11 @@ app.MapDelete("/api/coordinator/drivers/{id:int}", async (int id, IConfiguration
         return Results.Json(new { success = false, message = ex.Message }, statusCode: 500);
     }
 });
-<<<<<<< HEAD
 
 // ---------------------------------------------------------
 // SHUTTLE STOPS / ROUTES
 // ---------------------------------------------------------
+// Stop dropdown is sourced from the shuttle_stop table, not from distinct trip text pairs.
 app.MapGet("/api/coordinator/stops", async (IConfiguration config) => {
     string connectionString = config.GetConnectionString("DefaultConnection");
     var stops = new List<object>();
@@ -709,54 +698,38 @@ app.MapGet("/api/coordinator/stops", async (IConfiguration config) => {
     return Results.Ok(stops);
 });
 
+// Retained because coordinator-schedules.js populates its route dropdown from this endpoint.
 app.MapGet("/api/coordinator/routes", async (IConfiguration config) =>
 {
-=======
-// "Routes" aren't a table -- they're derived from the distinct departure/destination pairs
-// Route dropdown now sourced from shuttle_stop, not distinct trip text pairs
-app.MapGet("/api/coordinator/stops", async (IConfiguration config) => {
->>>>>>> 32f2232ae138a4fb55333747ba17065f714e0d19
     string connectionString = config.GetConnectionString("DefaultConnection");
-    var stops = new List<object>();
+    var routes = new List<object>();
 
     using var connection = new MySqlConnection(connectionString);
     await connection.OpenAsync();
 
-<<<<<<< HEAD
-    // Query your routes table or join origin and destination stops
+    // Join origin and destination stops to build a display name per route
     string query = @"
         SELECT 
             r.route_id, 
             CONCAT(s1.stop_name, ' → ', s2.stop_name) AS route_name
-        FROM routes r
+        FROM route r
         JOIN shuttle_stop s1 ON r.origin_stop_id = s1.stop_id
         JOIN shuttle_stop s2 ON r.destination_stop_id = s2.stop_id
         ORDER BY route_name ASC;";
 
-=======
-    string query = "SELECT stop_id, stop_name FROM shuttle_stop ORDER BY stop_name;";
->>>>>>> 32f2232ae138a4fb55333747ba17065f714e0d19
     using var command = new MySqlCommand(query, connection);
     using var reader = await command.ExecuteReaderAsync();
 
     while (await reader.ReadAsync())
     {
-        stops.Add(new
+        routes.Add(new
         {
-<<<<<<< HEAD
             routeId = Convert.ToInt32(reader["route_id"]),
             routeName = reader["route_name"].ToString()
         });
     }
 
     return Results.Ok(routes);
-=======
-            stopId = Convert.ToInt32(reader["stop_id"]),
-            stopName = reader["stop_name"].ToString()
-        });
-    }
-    return Results.Ok(stops);
->>>>>>> 32f2232ae138a4fb55333747ba17065f714e0d19
 });
 
 // ---------------------------------------------------------
@@ -773,8 +746,14 @@ app.MapGet("/api/coordinator/schedules", async (IConfiguration config) => {
     {
         string query = @"
             SELECT t.trip_id, t.departure_stop, t.destination_stop, t.departure_time, t.status,
+                   t.available_seats,
                    COALESCE(v.model, 'Unassigned') AS ShuttleName,
-                   COALESCE(CONCAT(d.first_name, ' ', d.last_name), 'Unassigned') AS DriverName
+                   COALESCE(v.registration_number, '') AS LicensePlate,
+                   COALESCE(v.capacity, 0) AS Capacity,
+                   COALESCE(CONCAT(d.first_name, ' ', d.last_name), 'Unassigned') AS DriverName,
+                   (SELECT COUNT(*) FROM trip_booking tb
+                     WHERE tb.trip_id = t.trip_id
+                       AND tb.booking_status <> 'Cancelled') AS BookedSeats
             FROM trip t
             LEFT JOIN vehicle v ON t.registration_number = v.registration_number
             LEFT JOIN driver d ON t.driver_id = d.driver_id
@@ -797,7 +776,16 @@ app.MapGet("/api/coordinator/schedules", async (IConfiguration config) => {
                 scheduleDate = departureDateTime.ToString("yyyy-MM-dd"),
                 shuttleName = reader["ShuttleName"].ToString(),
                 driverName = reader["DriverName"].ToString(),
-                status = reader["status"].ToString()
+                status = reader["status"].ToString(),
+                // Added for the coordinator dashboard's Seats column and the
+                // "Total Bookings Today" tile. Purely additive: no existing
+                // field above changed name, type or meaning.
+                licensePlate = reader["LicensePlate"].ToString(),
+                capacity = Convert.ToInt32(reader["Capacity"]),
+                bookedSeats = Convert.ToInt32(reader["BookedSeats"]),
+                availableSeats = reader["available_seats"] != DBNull.Value
+                    ? Convert.ToInt32(reader["available_seats"])
+                    : (int?)null
             });
         }
     }
@@ -838,7 +826,6 @@ app.MapGet("/api/coordinator/schedules/{id:int}", async (int id, IConfiguration 
 
     return Results.Ok(new
     {
-<<<<<<< HEAD
         scheduleId = reader.GetInt32("trip_id"),
         fromStop = reader["departure_stop"].ToString(),
         toStop = reader["destination_stop"].ToString(),
@@ -847,50 +834,6 @@ app.MapGet("/api/coordinator/schedules/{id:int}", async (int id, IConfiguration 
         driverID = Convert.ToInt32(reader["driver_id"]),
         registrationNumber = reader["registration_number"].ToString()
     });
-=======
-        string query = @"
-            SELECT d.driver_id, 
-                   CONCAT(d.first_name, ' ', d.last_name) AS FullName, 
-                   d.email, 
-                   d.phone,
-                   d.role,
-                   s.student_number,
-                   COALESCE(GROUP_CONCAT(v.model SEPARATOR ', '), 'Unassigned') AS ShuttleName
-            FROM driver d
-            LEFT JOIN student s ON d.email = s.email
-            LEFT JOIN vehicle v ON d.driver_id = v.driver_id
-            WHERE d.is_verified = 1 
-              AND (d.role = 'SHUTTLE_DRIVER' OR d.role IS NULL OR d.role != 'STUDENT_DRIVER') -- 👈 FILTERS OUT STUDENT DRIVERS
-            GROUP BY d.driver_id, d.first_name, d.last_name, d.email, d.phone, d.role, s.student_number;";
-
-        using var command = new MySqlCommand(query, connection);
-        using var reader = await command.ExecuteReaderAsync();
-
-        while (await reader.ReadAsync())
-        {
-            drivers.Add(new
-            {
-                id = Convert.ToInt32(reader["driver_id"]),
-                driverId = Convert.ToInt32(reader["driver_id"]),
-                fullName = reader["FullName"].ToString(),
-                email = reader["email"].ToString(),
-                role = reader["role"] != DBNull.Value ? reader["role"].ToString() : "SHUTTLE_DRIVER",
-                employeeId = $"DRV-{reader["driver_id"]}",
-                studentNumber = reader["student_number"] != DBNull.Value ? reader["student_number"].ToString() : "N/A",
-                assignedShuttle = reader["ShuttleName"] != DBNull.Value ? reader["ShuttleName"].ToString() : "Unassigned",
-                contactNumber = reader["phone"] != DBNull.Value ? reader["phone"].ToString() : "N/A",
-                status = "Active"
-            });
-        }
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"[API Error] Coordinator drivers loading failed: {ex.Message}");
-        return Results.Json(new { error = ex.Message }, statusCode: 500);
-    }
-
-    return Results.Ok(drivers);
->>>>>>> 32f2232ae138a4fb55333747ba17065f714e0d19
 });
 app.MapPost("/api/coordinator/schedules", async (ScheduleDirectDto req, IConfiguration config) => {
     string connectionString = config.GetConnectionString("DefaultConnection");
@@ -1196,45 +1139,6 @@ app.MapPost("/api/auth/reset-password", async (ResetPasswordRequest req, IConfig
     }
     return Results.BadRequest(new { success = false, message = "Invalid or expired reset token." });
 });
-app.MapGet("/api/admin/drivers/{driverId:long}/trips", async (long driverId, IConfiguration config) => {
-    string connectionString = config.GetConnectionString("DefaultConnection");
-    var trips = new List<object>();
-
-    using var connection = new MySqlConnection(connectionString);
-    await connection.OpenAsync();
-
-    string query = @"
-        SELECT t.trip_id, t.departure_stop, t.destination_stop, t.departure_time, t.status,
-               r.rating, r.review
-        FROM trip t
-        LEFT JOIN trip_booking tb ON tb.trip_id = t.trip_id
-        LEFT JOIN trip_review r ON r.booking_id = tb.booking_id
-        WHERE t.driver_id = @DriverId
-        ORDER BY t.departure_time DESC
-        LIMIT 20;";
-
-    using var command = new MySqlCommand(query, connection);
-    command.Parameters.AddWithValue("@DriverId", driverId);
-    using var reader = await command.ExecuteReaderAsync();
-
-    while (await reader.ReadAsync())
-    {
-        trips.Add(new
-        {
-            tripId = Convert.ToInt64(reader["trip_id"]),
-            departureStop = reader["departure_stop"].ToString(),
-            destinationStop = reader["destination_stop"].ToString(),
-            departureTime = reader["departure_time"] != DBNull.Value
-                ? Convert.ToDateTime(reader["departure_time"]).ToString("yyyy-MM-dd HH:mm")
-                : "",
-            status = reader["status"].ToString(),
-            rating = reader["rating"] != DBNull.Value ? Convert.ToInt32(reader["rating"]) : (int?)null,
-            review = reader["review"] != DBNull.Value ? reader["review"].ToString() : null
-        });
-    }
-    return Results.Ok(trips);
-});
-
 // ---------------------------------------------------------
 // DRIVER TRIP HISTORY (Admin Ratings "View Details")
 // ---------------------------------------------------------
@@ -1286,11 +1190,13 @@ public record LoginRequest(string Email, string Password);
 public record VerifyActionRequest(int DriverId);
 public record DynamicStatusUpdate(string Status);
 public record ShuttleDto(int? DriverId, string ShuttleName, string LicensePlate, int Capacity, string? Status);
-<<<<<<< HEAD
 public record DriverUpsertDto(string FullName, string Email, string? Phone);
 public record ForgotPasswordRequest(string Email);
 public record ResetPasswordRequest(string Token, string NewPassword);
 
+// Kept as a mutable class with nullable members: both the POST and PUT /api/coordinator/schedules
+// handlers access these via null-conditional operators (req.FromStop?.Trim(), req.ShuttleID?.ToString()),
+// which only type-check cleanly against nullable members.
 public class ScheduleDirectDto
 {
     public string? FromStop { get; set; }
@@ -1300,10 +1206,3 @@ public class ScheduleDirectDto
     public object? ShuttleID { get; set; }
     public int DriverID { get; set; }
 }
-=======
-//public record ScheduleDirectDto(string RouteName, string DepartureTime, string ScheduleDate, object ShuttleID, int DriverID);
-public record ScheduleDirectDto(string FromStop, string ToStop, string ScheduleDate, string DepartureTime, object ShuttleID, int DriverID);
-public record DriverUpsertDto(string FullName, string Email, string? Phone);
-public record ForgotPasswordRequest(string Email);
-public record ResetPasswordRequest(string Token, string NewPassword);
->>>>>>> 32f2232ae138a4fb55333747ba17065f714e0d19

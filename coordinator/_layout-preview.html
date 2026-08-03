@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Coordinator — Shared Layout Preview</title>
+
+    <!-- Tokens must load before the shared layout stylesheet -->
+    <link rel="stylesheet" href="../assets/css/design-tokens.css">
+    <link rel="stylesheet" href="../assets/css/shared-layout.css">
+    <style>
+        /* Preview-only reset; real screens keep their own page styles. */
+        body { margin: 0; }
+    </style>
+</head>
+<body class="at-shell">
+
+    <!-- SHARED TOP APP BAR (injected) -->
+    <div data-at-topbar data-title="Coordinator Portal"></div>
+
+    <!-- SHARED SIDEBAR (injected, role-aware) -->
+    <div data-at-sidebar data-role="coordinator" data-active="dashboard"></div>
+
+    <main class="at-main">
+        <div class="at-content">
+
+            <!-- SECTION: cards -->
+            <section class="at-section">
+                <h1 style="font-size:var(--font-size-h1); font-weight:var(--font-weight-semibold); line-height:var(--line-height-h1); margin:0 0 var(--space-lg);">
+                    Shared Layout Preview
+                </h1>
+
+                <div class="at-card-grid">
+                    <article class="at-card">
+                        <div class="at-card__header">
+                            <div>
+                                <h2 class="at-card__title">Active Fleet</h2>
+                                <p class="at-card__subtitle">Vehicles in service</p>
+                            </div>
+                            <span class="at-badge at-badge--active">Active</span>
+                        </div>
+                        <p style="margin:0; font-size:var(--font-size-h1); font-weight:var(--font-weight-semibold);">12</p>
+                    </article>
+
+                    <article class="at-card at-card--interactive" tabindex="0">
+                        <div class="at-card__header">
+                            <div>
+                                <h2 class="at-card__title">Interactive Card</h2>
+                                <p class="at-card__subtitle">Hover and focus lift this one</p>
+                            </div>
+                            <span class="at-badge at-badge--pending">Pending</span>
+                        </div>
+                        <p style="margin:0; color:var(--color-on-surface-variant); font-size:var(--font-size-body-md);">
+                            Static cards stay flat so they don't imply clickability.
+                        </p>
+                    </article>
+                </div>
+            </section>
+
+            <!-- SECTION: every status badge variant -->
+            <section class="at-section">
+                <div class="at-card">
+                    <h2 class="at-card__title" style="margin-bottom:var(--space-md);">Status Badges</h2>
+                    <div style="display:flex; flex-wrap:wrap; gap:var(--space-sm);">
+                        <span class="at-badge at-badge--pending">Pending</span>
+                        <span class="at-badge at-badge--active">Active</span>
+                        <span class="at-badge at-badge--verified">Verified</span>
+                        <span class="at-badge at-badge--cancelled">Cancelled</span>
+                        <span class="at-badge at-badge--rejected">Rejected</span>
+                        <span class="at-badge at-badge--completed">Completed</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION: buttons -->
+            <section class="at-section">
+                <div class="at-card">
+                    <h2 class="at-card__title" style="margin-bottom:var(--space-md);">Buttons</h2>
+                    <div style="display:flex; flex-wrap:wrap; gap:var(--space-sm);">
+                        <button class="at-btn at-btn--primary" type="button">Primary Action</button>
+                        <button class="at-btn at-btn--secondary" type="button">Secondary</button>
+                        <button class="at-btn at-btn--danger" type="button">Delete</button>
+                        <button class="at-btn at-btn--primary" type="button" disabled>Disabled</button>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <script src="../assets/js/shared-layout.js"></script>
+</body>
+</html>

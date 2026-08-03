@@ -3,171 +3,250 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Coordinator Portal - Dashboard</title>
-    <link rel="stylesheet" href="../assets/css/styles.css">
-    <link rel="stylesheet" href="../assets/css/coordinator.css">
-    <link rel="stylesheet" href="../assets/css/driver-dashboard.css">
+    <title>Coordinator Portal - Operations Dashboard</title>
+
+    <!-- Tokens first, then shared chrome, then this screen.
+         styles.css / coordinator.css are deliberately NOT loaded here: they set
+         `* { font-family: 'Segoe UI' }` and `body { display: flex }`, which
+         override Inter and fight the shared layout. Everything this page needs
+         from them is re-provided in coordinator-dashboard.css. -->
+    <link rel="stylesheet" href="../assets/css/design-tokens.css">
+    <link rel="stylesheet" href="../assets/css/shared-layout.css">
+    <link rel="stylesheet" href="../assets/css/coordinator-dashboard.css">
+    <style>
+        body { margin: 0; }
+    </style>
 </head>
-<body>
-    <div class="sidebar">
-        <div class="brand">
-            <h1>GETYOURRIDE</h1>
-            <span>Shuttle Coordinator</span>
-        </div>
-        <ul class="menu-list">
-            <li><a href="dashboard.html" class="menu-item active">📋 Dashboard</a></li>
-            <li><a href="manage-shuttles.html" class="menu-item">🚌 Shuttle Management</a></li>
-            <li><a href="schedule-shuttles.html" class="menu-item">📅 Schedule shuttles</a></li>
-            <li><a href="manage-drivers.html" class="menu-item">👨‍✈️ Shuttle driver management</a></li>
-        </ul>
+<body class="at-shell">
 
-        <div class="sidebar-spacer"></div>
+    <!-- ==================================================================
+         SHARED TOP APP BAR (injected by shared-layout.js)
+         data-inset = the light strip from the reference, offset by the rail
+         ================================================================== -->
+    <div data-at-topbar data-inset data-title="Coordinator Portal"></div>
 
-        <ul class="menu-list bottom-menu">
-            <li><a href="#" class="menu-item" onclick="openSettingsModal()">⚙️ Settings</a></li>
-            <li><a href="#" class="menu-item" onclick="openSupportModal()">❓ Support Help</a></li>
-        </ul>
+    <!-- ==================================================================
+         SHARED SIDEBAR (injected by shared-layout.js)
+         Brand, role-aware nav, "New Booking" CTA, Settings/Support and the
+         user footer all come from the shared partial.
+         ================================================================== -->
+    <div data-at-sidebar
+         data-role="coordinator"
+         data-active="dashboard"
+         data-full-height
+         data-brand="GETYOURRIDE"
+         data-brand-role="Shuttle Coordinator"
+         data-secondary-nav
+         data-user-footer></div>
 
-        <div class="sidebar-profile-footer">
-            <div class="sidebar-profile-footer">
-                <!-- ✅ Added an ID to the trigger area if your dropdown toggle needs it -->
-                <div class="profile-trigger-area" id="profileTrigger" onclick="toggleProfileMenu()">
-                    <!-- Added placeholder initials 'SC' for Shuttle Coordinator -->
-                    <div class="avatar-placeholder" style="display: flex; align-items: center; justify-content: center; background: #cbd5e1; color: #0f172a; font-weight: 700; font-size: 12px;">SC</div>
-                    <div class="profile-info-text">
-                        <!-- ✅ FIX: Changed IDs from 'driver...' to 'coordinator...' to match JS -->
-                        <span class="user-display-name" id="coordinatorNameLabel">Loading profile...</span>
-                        <span class="user-display-email" id="coordinatorEmailLabel">connecting to database...</span>
+    <main class="at-main">
+        <div class="at-content">
+
+            <!-- ==========================================================
+                 PAGE HEADING
+                 ========================================================== -->
+            <h1 class="ops-heading">Operations Dashboard</h1>
+            <p class="ops-subheading" id="opsDateLine">Live overview of campus transportation systems.</p>
+
+            <!-- ==========================================================
+                 STAT CARDS
+                 Values are injected by coordinator-ops-dashboard.js. Figures
+                 the current API cannot supply render as a dash rather than a
+                 made-up number.
+                 ========================================================== -->
+            <section class="ops-stats" aria-label="Operations summary">
+
+                <!-- Total shuttles: count of GET /api/coordinator/shuttles -->
+                <article class="ops-stat ops-stat--navy">
+                    <div class="ops-stat__top">
+                        <span class="ops-stat__icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17h16M4 17V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v11"/><path d="M4 11h16"/><circle cx="7.5" cy="17" r="1.5"/><circle cx="16.5" cy="17" r="1.5"/></svg>
+                        </span>
+                        <span class="ops-stat__pill ops-stat__pill--unavailable"
+                              title="Week-on-week comparison needs historical data the API does not expose.">&mdash;</span>
                     </div>
-                </div>
-            </div>
+                    <div>
+                        <p class="ops-stat__label">Total Shuttles</p>
+                        <p class="ops-stat__value" id="statTotalShuttles">&mdash;</p>
+                    </div>
+                </article>
 
-            <div class="profile-dropdown-menu" id="profileDropdown">
-                <a href="#" class="dropdown-link" id="btnDropdownProfile" onclick="openProfileModal(event)">👤 View Profile</a>
-                <hr class="dropdown-divider">
-                <a href="#" class="dropdown-link logout-action" onclick="handleLogout()">🚪 Logout Portal</a>
-            </div>
+                <!-- Active schedules today: /schedules filtered to today's date -->
+                <article class="ops-stat ops-stat--green">
+                    <div class="ops-stat__top">
+                        <span class="ops-stat__icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="m9 16 2 2 4-4"/></svg>
+                        </span>
+                        <span class="ops-stat__pill ops-stat__pill--unavailable"
+                              title="On-time state needs an ETA field the trip record does not have.">&mdash;</span>
+                    </div>
+                    <div>
+                        <p class="ops-stat__label">Active Schedules Today</p>
+                        <p class="ops-stat__value" id="statActiveSchedules">&mdash;</p>
+                    </div>
+                </article>
+
+                <!-- Total bookings today: no coordinator bookings endpoint exists -->
+                <article class="ops-stat ops-stat--blue">
+                    <div class="ops-stat__top">
+                        <span class="ops-stat__icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2 2 0 0 0 0 6v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-6z"/><path d="M13 5v14"/></svg>
+                        </span>
+                        <!-- Live: booked seats vs capacity across today's trips -->
+                        <span class="ops-stat__pill" id="statCapacityPill">&mdash;</span>
+                    </div>
+                    <div>
+                        <p class="ops-stat__label">Total Bookings Today</p>
+                        <p class="ops-stat__value" id="statTotalBookings">&mdash;</p>
+                    </div>
+                </article>
+
+                <!-- Drivers: count of GET /api/coordinator/drivers.
+                     NOTE: this is the total driver roster, not an on-duty count -
+                     the drivers endpoint hard-codes status to "Active". -->
+                <article class="ops-stat ops-stat--amber">
+                    <div class="ops-stat__top">
+                        <span class="ops-stat__icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg>
+                        </span>
+                        <span class="ops-stat__pill ops-stat__pill--unavailable"
+                              title="Standby count needs a driver duty/shift field that does not exist.">&mdash;</span>
+                    </div>
+                    <div>
+                        <p class="ops-stat__label">Drivers On Roster</p>
+                        <p class="ops-stat__value" id="statDriversOnDuty">&mdash;</p>
+                    </div>
+                </article>
+            </section>
+
+            <!-- ==========================================================
+                 LIVE SHUTTLE OPERATIONS
+                 ========================================================== -->
+            <section class="ops-panel" aria-labelledby="opsPanelTitle">
+                <div class="ops-panel__header">
+                    <h2 class="ops-panel__title" id="opsPanelTitle">Live Shuttle Operations</h2>
+                    <span class="ops-live-pill">
+                        <span class="ops-live-pill__dot" aria-hidden="true"></span>
+                        Live Updates
+                    </span>
+                </div>
+
+                <div class="ops-table-scroll">
+                    <table class="ops-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Shuttle Name</th>
+                                <th scope="col">Route</th>
+                                <th scope="col">Departure</th>
+                                <th scope="col">Driver Assigned</th>
+                                <th scope="col">Seats</th>
+                                <th scope="col">Status</th>
+                            </tr>
+                        </thead>
+                        <!-- Rows injected by coordinator-ops-dashboard.js -->
+                        <tbody id="opsTableBody">
+                            <tr class="ops-state-row">
+                                <td colspan="6">Loading live operations...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="ops-panel__footer">
+                    <span class="ops-count" id="opsCount">Loading...</span>
+                    <nav class="ops-pager" id="opsPager" aria-label="Schedule pages"></nav>
+                </div>
+            </section>
+
         </div>
-    </div>
+    </main>
 
-    <div class="main-content">
-        <div class="top-navbar">
-            <div class="nav-breadcrumb">Coordinator Portal &gt; <strong>Dashboard Hub</strong></div>
-
-            <div class="top-navbar-right">
-                <div class="portal-badge">
-                    <span id="liveClock" style="font-family: monospace; font-weight: 700; color: #ff7a00; margin-right: 15px;">00:00:00</span>
-                    Coordinator Portal
-                </div>
-                <button class="top-logout-btn" onclick="handleLogout()"> Logout</button>
-            </div>
-        </div>
-
-        <div class="content-body">
-            <div class="view-header">
-                <div>
-                    <h2>Welcome Back, Coordinator</h2>
-                    <p class="subtitle">Monitor fleet status, assign active drivers, and oversee transit operations.</p>
-                </div>
-            </div>
-
-            <div class="use-case-grid">
-                <div class="uc-card" id="cardManageShuttles">
-                    <div class="uc-badge easy"></div>
-                    <div class="uc-icon">🚌</div>
-                    <h3>Manage Shuttles</h3>
-                    <p>Configure, update configurations, monitor operational capacities, or track maintenance states across your vehicle assets fleet.</p>
-                    <a href="manage-shuttles.html" class="uc-link-text" style="text-decoration: none; display: inline-block;">Open Fleet Manager →</a>
-                </div>
-
-                <div class="uc-card" id="cardManageDrivers">
-                    <div class="uc-badge medium"></div>
-                    <div class="uc-icon">👨‍✈️</div>
-                    <h3>Manage Shuttle Drivers</h3>
-                    <p>Oversee authorized transport personnel, link operators to profiles, track shift states, and verify active assignments.</p>
-                    <a href="manage-drivers.html" class="uc-link-text" style="text-decoration: none; display: inline-block;">Open Driver Profiles →</a>
-                </div>
-
-                <div class="uc-card" id="cardScheduleShuttles">
-                    <div class="uc-badge complex"></div>
-                    <div class="uc-icon">📅</div>
-                    <h3>Schedule Shuttles</h3>
-                    <p>Map vehicle entities to routes, establish departure timelines, and prevent dispatch conflicts.</p>
-                    <a href="schedule-shuttles.html" class="uc-link-text" style="text-decoration: none; display: inline-block;">Open Assignment Scheduler →</a>
-                </div>
-            </div>
-
-            <div class="table-card">
-                <div class="table-header">
-                    <h3>Operational Status Summary</h3>
-                </div>
-                <div class="dashboard-status-placeholder">
-                    <p>Select a specific workflow panel card block above to manipulate real-time system database registers.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="profile-modal-overlay" id="profileModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 9999;">
+    <!-- ==================================================================
+         PROFILE MODAL - opened by admin-dropdown.js (openProfileModal)
+         ================================================================== -->
+    <div class="profile-modal-overlay" id="profileModal">
         <div class="profile-modal-card">
-            <h3>Coordinator Profile Card</h3>
-            <hr style="border:0; border-top:1px solid #e2e8f0; margin: 12px 0 20px 0;">
-
-            <div style="text-align: center; margin-bottom: 20px;">
-                <div class="avatar-circle" style="width: 64px; height: 64px; font-size: 1.5rem; margin: 0 auto 12px auto; display: flex; align-items: center; justify-content: center; background: #e2e8f0; border-radius: 50%;">SC</div>
+            <h3>Coordinator Profile</h3>
+            <div class="modal-body-content">
+                <p><strong>Full Name:</strong> <span id="modalFullName">Loading...</span></p>
+                <p><strong>Personnel ID Number:</strong> <span id="modalIdNumber">Loading...</span></p>
+                <p><strong>System Email:</strong> <span id="modalEmail">Loading...</span></p>
+                <p><strong>Assigned Role:</strong> <span class="at-badge at-badge--verified" id="modalRole">Loading...</span></p>
             </div>
-
-            <div class="modal-body-content" style="margin-bottom: 20px; line-height: 1.8;">
-                <p><strong>Full Name:</strong> <span id="modalFullName" style="color: #334155; font-weight: 600;">Loading...</span></p>
-                <p><strong>Personnel ID Number:</strong> <span id="modalIdNumber" style="color: #334155; font-weight: 600;">Loading...</span></p>
-                <p><strong>System Email:</strong> <span id="modalEmail" style="color: #334155; font-weight: 600;">Loading...</span></p>
-                <p><strong>Assigned Role:</strong> <span id="modalRole" style="background: #e0f2fe; color: #0369a1; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 600;">Loading...</span></p>
-            </div>
-
-            <div class="modal-actions">
-                <button type="button" class="close-modal-btn" onclick="closeProfileModal()" style="width: 100%; background: #64748b; color: white; border: none; padding: 10px; border-radius: 6px; font-weight: 600; cursor: pointer;">Close Reference</button>
-            </div>
+            <button type="button" class="close-modal-btn" onclick="closeProfileModal()">Close</button>
         </div>
     </div>
 
+    <!-- ==================================================================
+         SETTINGS MODAL - opened by admin-dropdown.js (openSettingsModal)
+         Keeps the same themeSelect / refreshSelect IDs that script persists.
+         ================================================================== -->
     <div class="profile-modal-overlay" id="settingsModal">
         <div class="profile-modal-card">
-            <h3>⚙️ Portal Settings</h3>
+            <h3>Portal Settings</h3>
             <div class="modal-body-content">
-                <label style="display:block; margin: 10px 0 5px; font-weight:600; font-size:13px;">Dashboard Theme</label>
-                <select id="themeSelect" style="width:100%; padding:8px; border-radius:6px; border:1px solid #cbd5e1; outline:none;">
+                <label for="themeSelect">Dashboard Theme</label>
+                <select id="themeSelect">
                     <option value="light">Default Light Mode</option>
                     <option value="dark">High Contrast Dark Mode</option>
                 </select>
-                <label style="display:block; margin: 15px 0 5px; font-weight:600; font-size:13px;">Refresh Frequency</label>
-                <select id="refreshSelect" style="width:100%; padding:8px; border-radius:6px; border:1px solid #cbd5e1; outline:none;">
+
+                <label for="refreshSelect">Refresh Frequency</label>
+                <select id="refreshSelect">
                     <option value="30000">Every 30 Seconds</option>
                     <option value="60000">Every Minute</option>
                     <option value="manual">Manual Refresh</option>
                 </select>
             </div>
-            <button class="close-modal-btn" onclick="closeSettingsModal()">Save & Close</button>
+            <button type="button" class="close-modal-btn" onclick="closeSettingsModal()">Save &amp; Close</button>
         </div>
     </div>
+
+    <!-- ==================================================================
+         SUPPORT MODAL - opened by admin-dropdown.js (openSupportModal)
+         ================================================================== -->
     <div class="profile-modal-overlay" id="supportModal">
         <div class="profile-modal-card">
-            <h3>❓ Dispatch Support Help</h3>
+            <h3>Dispatch Support</h3>
             <div class="modal-body-content">
-                <p style="font-size:13px; color:#64748b;">Need immediate assistance with a transit route layout or emergency check-in failure?</p>
-                <div style="background:#f8fafc; padding:12px; border-radius:6px; border-left:4px solid #ff7a00; margin:10px 0;">
-                    <strong>📞 Transit Control Line:</strong><br>+27 (0) 41 504 1111
-                </div>
-                <div style="background:#f8fafc; padding:12px; border-radius:6px; border-left:4px solid #10b981; margin:10px 0;">
-                    <strong>✉️ Emergency Support:</strong><br>support@getyourride.com
-                </div>
+                <p>Need immediate assistance with a transit route layout or an emergency check-in failure?</p>
+                <p><strong>Transit Control Line:</strong><br>+27 (0) 41 504 1111</p>
+                <p><strong>Emergency Support:</strong><br>support@getyourride.com</p>
             </div>
-            <button class="close-modal-btn" onclick="closeSupportModal()">Close Help Desk</button>
+            <button type="button" class="close-modal-btn" onclick="closeSupportModal()">Close</button>
         </div>
     </div>
 
+    <!-- ==================================================================
+         LOGOUT MODAL
+         admin-dropdown.js's final handleLogout() targets #logoutModal. That
+         element did not exist before, so every logout click threw a TypeError.
+         Adding it makes the existing confirmLogout/closeLogoutModal work.
+         ================================================================== -->
+    <div class="profile-modal-overlay" id="logoutModal">
+        <div class="profile-modal-card">
+            <h3>Sign out?</h3>
+            <div class="modal-body-content">
+                <p>You will be returned to the login screen.</p>
+            </div>
+            <div style="display:flex; gap:var(--space-sm); margin-top:var(--space-lg);">
+                <button type="button" class="at-btn at-btn--secondary" style="flex:1;" onclick="closeLogoutModal()">Cancel</button>
+                <button type="button" class="at-btn at-btn--danger" style="flex:1;" onclick="confirmLogout()">Sign out</button>
+            </div>
+        </div>
+    </div>
 
-    <script src="../assets/js/coordinator-schedules.js"></script>
-    <script src="../assets/js/coordinator-dashboard.js"></script>
+    <!-- ==================================================================
+         SCRIPTS
+         - shared-layout.js          : injects the top bar + sidebar
+         - admin-dropdown.js         : existing modal / dropdown / profile logic
+         - coordinator-ops-dashboard : live stat cards + operations table
+         coordinator-dashboard.js is intentionally not loaded: it redeclares
+         COORDINATOR_PROFILE_API_URL (already declared by coordinator-schedules.js),
+         so it died with a SyntaxError and never executed on this page.
+         ================================================================== -->
+    <script src="../assets/js/shared-layout.js"></script>
     <script src="../assets/js/admin-dropdown.js"></script>
+    <script src="../assets/js/coordinator-ops-dashboard.js"></script>
 </body>
 </html>
